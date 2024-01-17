@@ -3,11 +3,19 @@ import time
 import os
 import re
 
-dumpit_path = 'C:\\Users\\renan\\OneDrive\\Área de Trabalho\\automation\\Dumpit\\x64\\DumpIt.exe'
-dump_folder = r'\\VBOXSVR\dumps'
+def compress(file, input_folder, output_folder):
+    try:
+        subprocess.run(["tar", "-acf", os.path.join(output_folder, f"{file}.zip"), os.path.join(input_folder, file)], check=True)
+        print(f"Compression successful: {file}")
+    except subprocess.CalledProcessError as e:
+        print(f"Compression failed: {e}")
+
+dumpit_path = 'C:\\Users\\vboxuser\\Downloads\\automation\\Magnet\\x64\\Dumpit.exe'
+dump_folder = 'C:\\Users\\vboxuser\\Downloads\\automation\\tmp'
+compressed_folder = r'\\VBOXSVR\dumps'
 
 total_runtime = 3*60   # modify the total runtime if needed
-dump_interval = 40      # creates dump every 1 minute
+dump_interval = 60      # creates dump every 1 minute
 
 start_number = 1  # Starting number for the dumps
 
@@ -26,7 +34,7 @@ while time.time() - start_time < total_runtime:
         dump_path = os.path.join(dump_folder, dump_filename)
 
         subprocess.Popen([dumpit_path, '/OUTPUT', dump_path, '/Q'])
-
+        
         count += 1
         time.sleep(dump_interval)       # wait for 1 minute to create another dump
 
@@ -34,3 +42,9 @@ while time.time() - start_time < total_runtime:
         print(f"An error occurred: {e}")
 
 print("Finished creating dumps")
+
+files = os.listdir(dump_folder)
+print(files)
+for file in files:
+    dump_path = os.path.join(dump_folder, file)
+    compress(file, dump_folder, compressed_folder)
