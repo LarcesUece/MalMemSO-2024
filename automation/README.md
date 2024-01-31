@@ -59,6 +59,10 @@ Na Máquina Virtual do Windows, é necessário executar o seguinte comando como 
 
     `chmod +x volatility/vol.py`
 
+    Adicione o trecho de código na primeira linha do programa `vol.py`
+
+    `#!/usr/bin/env python2`
+
 ### Testando o Volatility
 
 `python2.7 volatility/vol.py --info`
