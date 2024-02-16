@@ -46,7 +46,9 @@ Na Máquina Virtual do Windows, é necessário executar o seguinte comando como 
 
 * Instalando Volatility2 e suas depências do Python
 
-    `python2 -m pip install -U distorm3 yara pycrypto pillow openpyxl ujson pytz ipython capstone sudo python2 -m pip install yara`
+    `python2 -m pip install -U distorm3 yara pycrypto pillow openpyxl ujson pytz ipython capstone`
+    
+    `sudo python2 -m pip install yara`
 
     `sudo ln -s /usr/local/lib/python2.7/dist-packages/usr/lib/libyara.so /usr/lib/libyara.so`
 
