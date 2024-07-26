@@ -2,7 +2,7 @@
 
 ## Setup Ubuntu 24.04 Server
 
-## update server
+## Update server
 `apt update`
 
 `apt upgrade`
