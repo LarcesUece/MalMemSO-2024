@@ -7,7 +7,7 @@
 
 `apt upgrade`
 
-## install server packages
+## Install server packages
 `apt install openssh-server`
 
 `apt install git`
@@ -17,7 +17,7 @@
 `apt install cifs-utils`
 
 
-## create directories
+## Create directories
 
 `mkdir /var/app`
 
@@ -29,15 +29,15 @@
 ## Move to work directory
 `cd /var`
 
-## create virtual env
+## Create virtual env
 `virtualenv app`
 
 `cd /var/app`
 
-## activate virtual env
+## Activate virtual env
 `source bin/activate`
 
-## install dependencies
+## Install dependencies
 `pip3 install pefile`
 
 `pip3 install yara-python`
@@ -58,7 +58,7 @@
 
 `pip3 install pywinrm`
 
-## install Volatility3 and VolMemLyzer
+## Install Volatility3 and VolMemLyzer
 
 `cd /var/app/webapp`
 
