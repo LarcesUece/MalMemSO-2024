@@ -2,12 +2,12 @@
 
 ## Setup Ubuntu 24.04 Server
 
-## Update server
+### Update server
 `apt update`
 
 `apt upgrade`
 
-## Install server packages
+### Install server packages
 `apt install openssh-server`
 
 `apt install git`
@@ -17,7 +17,7 @@
 `apt install cifs-utils`
 
 
-## Create directories
+### Create directories
 
 `mkdir /var/app`
 
@@ -26,18 +26,18 @@
 `mkdir /var/app/webapp`
 
 
-## Move to work directory
+### Move to work directory
 `cd /var`
 
-## Create virtual env
+### Create virtual env
 `virtualenv app`
 
 `cd /var/app`
 
-## Activate virtual env
+### Activate virtual env
 `source bin/activate`
 
-## Install dependencies
+### Install dependencies
 `pip3 install pefile`
 
 `pip3 install yara-python`
@@ -58,7 +58,7 @@
 
 `pip3 install pywinrm`
 
-## Install Volatility3 and VolMemLyzer
+### Install Volatility3 and VolMemLyzer
 
 `cd /var/app/webapp`
 
@@ -67,7 +67,7 @@
 `git clone https://github.com/ahlashkari/VolMemLyzer`
 
 
-## Configure VolMemLyzer
+### Configure VolMemLyzer
 
 Update `VolMemLyzer-V2.py`, change this code:
 
