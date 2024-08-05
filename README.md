@@ -60,7 +60,7 @@
 
 ### Install Volatility3 and VolMemLyzer
 
-`cd /var/app/webapp`
+`cd /var/app/`
 
 `git clone https://github.com/volatilityfoundation/volatility3.git`
 
@@ -69,7 +69,7 @@
 
 ### Configure VolMemLyzer
 
-Update `VolMemLyzer-V2.py`, change this code:
+Update `/var/app/VolMemLyzer/VolMemLyzer-V2.py`, change this code:
 
 ```
 VOL_MODULES = {
