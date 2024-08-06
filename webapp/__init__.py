@@ -1,7 +1,7 @@
 import os
-from flask import Flask
+from flask import Flask, request
 
-import detect
+from detect import analysis
 import register
 import respond
 
