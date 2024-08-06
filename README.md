@@ -58,7 +58,7 @@
 
 `pip3 install pywinrm`
 
-`pip3 install scikit-learn`
+`pip3 install scikit-learn==1.5.1`
 
 ### Install Volatility3 and VolMemLyzer
 
