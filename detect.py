@@ -67,9 +67,12 @@ def extract_features_from_dump(ip, datetime):
   
     print("Init uncompress dump")
     # uncompress dump
-    cmd = "tar -xzvf /var/app/dumps/" + datetime + ".tar.gz /var/app/dumps/" + datetime +".raw" #-C tmp/
+    cmd = "tar -xzvf /var/app/dumps/" + datetime + ".tar.gz" #-C tmp/
     os.system(cmd)
-
+  
+    cmd = "mv /var/app/dumps/" + datetime + " /var/app/dumps/" + datetime +".raw" #-C tmp/
+    os.system(cmd)
+  
     print("Init features extraction")
     # extract features from dump
     cmd = "python3 VolMemLyzer/VolMemLyzer-V2.py -f /var/app/dumps -o /var/app/dumps -V /var/app/volatility3/vol.py"
