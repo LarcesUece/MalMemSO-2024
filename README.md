@@ -58,6 +58,8 @@
 
 `pip3 install pywinrm`
 
+`pip3 install scikit-learn`
+
 ### Install Volatility3 and VolMemLyzer
 
 `cd /var/app/`
