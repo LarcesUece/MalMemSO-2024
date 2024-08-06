@@ -56,6 +56,7 @@ def extract_features_from_dump(ip, datetime):
     win_user_login = "suporte"
     win_user_passwd = "123456"
 
+    print("Init dump copy")
     # mount Windows Dump Shared Directory
     cmd = "mount -t cifs //" + ip + "/Users/suporte/Documents/Dumps /var/app/webapp/dumps/" + ip + " -o username=" + win_user_login + ",password=" + win_user_passwd
     os.system(cmd)
@@ -63,11 +64,13 @@ def extract_features_from_dump(ip, datetime):
     # copy dump to work directory
     cmd = "cp /var/app/web/app/dumps/"+ ip + "/" + datetime + ".tar.gz" + "/var/app/web/app/dumps/" 
     os.system(cmd)
-
+  
+    print("Init uncompress dump")
     # uncompress dump
     cmd = "tar -xzvf /var/app/web/app/dumps/" + datetime + ".tar.gz /var/app/web/app/dumps/" + datetime +".raw" #-C tmp/
     os.system(cmd)
 
+    print("Init features extraction")
     # extract features from dump
     cmd = "python3 VolMemLyzer/VolMemLyzer-V2.py -f /var/app/webapp/dumps -o /var/app/webapp/dumps -V /var/app/volatility3/vol.py"
     os.system(cmd)
@@ -91,7 +94,8 @@ def extract_features_from_dump(ip, datetime):
 
 def analysis(ip, datetime):
     extract_features_from_dump(ip, datetime)
-    
+
+    print("Init classification")
     pkl_filename = "cart_model.pkl"
     loaded_model = pickle.load(open(pkl_filename, 'rb'))
 
@@ -118,6 +122,8 @@ def analysis(ip, datetime):
     y_pred = loaded_model.predict(x)
     
     if(y_pred[0] == 1):
+        print("A malware was found.")  
         return True
     else:
+        print("NO malware was found.")
         return False
