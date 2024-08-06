@@ -10,7 +10,7 @@ def on_bigquery(hostname, ip, datetime, is_detected):
 #    is_detected = False
 
     project_id = 'malware-detection-422423' # Fill with project ID
-    service_account = 'bq-user@malware-detection-422423.iam.gserviceaccount.com>
+    #service_account = 'bq-user@malware-detection-422423.iam.gserviceaccount.com>
     dataset = "detection_records" # Fill with dataset name
     table = "records" # Fill with table name
 
