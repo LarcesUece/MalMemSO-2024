@@ -5,6 +5,8 @@
 Install python3
 'https://www.python.org/downloads/'
 
+Enable Windows Subsystem Linux
+
 Create and share folder Documents/Dumps on current user home
 
 Copy dump.py to Documents/Dumps
