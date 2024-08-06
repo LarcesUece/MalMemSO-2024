@@ -15,6 +15,7 @@ def disable_host_network(ip):
     # password encryption
     #password_b64 = base64.b64encode(win_user_passwd.encode('utf-8')).decode('utf-8')
 
+    print("Responding")
     # remote command
     conn = winrm.Session(f"http://{ip}:5985", auth=(win_user_login, win_user_passwd))
     result = conn.run_ps(powershell_command)
