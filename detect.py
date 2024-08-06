@@ -57,11 +57,11 @@ def extract_features_from_dump(ip, datetime):
     win_user_passwd = "123456"
 
     # mount Windows Dump Shared Directory
-    cmd = "mount -t cifs //IP/Users/suporte/Documents/Dumps /var/app/webapp/dumps/" + ip + " -o username=" + win_user_login + ",password=" + win_user_passwd
+    cmd = "mount -t cifs //" + ip + "/Users/suporte/Documents/Dumps /var/app/webapp/dumps/" + ip + " -o username=" + win_user_login + ",password=" + win_user_passwd
     os.system(cmd)
 
     # copy dump to work directory
-    cmd = "cp /var/app/web/app/dumps/"+ ip + "/" + datetime + ".tar.gz" + /var/app/web/app/dumps/
+    cmd = "cp /var/app/web/app/dumps/"+ ip + "/" + datetime + ".tar.gz" + "/var/app/web/app/dumps/" 
     os.system(cmd)
 
     # uncompress dump
