@@ -62,7 +62,7 @@ def extract_features_from_dump(ip, datetime):
     os.system(cmd)
 
     # copy dump to work directory
-    cmd = "mv /var/app/dumps/"+ ip + "/" + datetime + ".tar.gz" + "/var/app/dumps/" 
+    cmd = "mv /var/app/dumps/"+ ip + "/" + datetime + ".tar.gz " + "/var/app/dumps/" 
     os.system(cmd)
   
     print("Init uncompress dump")
