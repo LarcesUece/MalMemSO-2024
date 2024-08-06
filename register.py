@@ -21,7 +21,7 @@ def on_bigquery(hostname, ip, datetime, is_detected):
 
     rows =  [
         {'hostname': hostname, 'ip': ip, "is_malware_detected": is_detected,  "timestamp": datetime} ]
-
+    print("Recording")
     # Insert data into table.
     inserted = client.push_rows(dataset, table, rows)
     
