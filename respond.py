@@ -1,9 +1,9 @@
 import winrm
 import base64
 
-#def disable_host_network(ip):
-def disable_host_network():
-    ip = '192.168.0.16'
+def disable_host_network(ip):
+#def disable_host_network():
+    #ip = '192.168.0.16'
 
     # windows credentials
     win_user_login = "suporte"
