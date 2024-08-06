@@ -39,7 +39,7 @@ def create_app(test_config=None):
         datetime = request.form['datetime']
 
         # dump analysis
-        is_detected = detect.analysis(ip, datetime)
+        is_detected = analysis(ip, datetime)
 
         # record on big query the analysis
         register.on_bigquery(hostname, ip, datetime, is_detected)
