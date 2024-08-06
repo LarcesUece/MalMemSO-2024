@@ -58,36 +58,36 @@ def extract_features_from_dump(ip, datetime):
 
     print("Init dump copy")
     # mount Windows Dump Shared Directory
-    cmd = "mount -t cifs //" + ip + "/Users/suporte/Documents/Dumps /var/app/webapp/dumps/" + ip + " -o username=" + win_user_login + ",password=" + win_user_passwd
+    cmd = "mount -t cifs //" + ip + "/Users/suporte/Documents/Dumps /var/app/dumps/" + ip + " -o username=" + win_user_login + ",password=" + win_user_passwd
     os.system(cmd)
 
     # copy dump to work directory
-    cmd = "cp /var/app/web/app/dumps/"+ ip + "/" + datetime + ".tar.gz" + "/var/app/web/app/dumps/" 
+    cmd = "mv /var/app/dumps/"+ ip + "/" + datetime + ".tar.gz" + "/var/app/dumps/" 
     os.system(cmd)
   
     print("Init uncompress dump")
     # uncompress dump
-    cmd = "tar -xzvf /var/app/web/app/dumps/" + datetime + ".tar.gz /var/app/web/app/dumps/" + datetime +".raw" #-C tmp/
+    cmd = "tar -xzvf /var/app/dumps/" + datetime + ".tar.gz /var/app/dumps/" + datetime +".raw" #-C tmp/
     os.system(cmd)
 
     print("Init features extraction")
     # extract features from dump
-    cmd = "python3 VolMemLyzer/VolMemLyzer-V2.py -f /var/app/webapp/dumps -o /var/app/webapp/dumps -V /var/app/volatility3/vol.py"
+    cmd = "python3 VolMemLyzer/VolMemLyzer-V2.py -f /var/app/dumps -o /var/app/dumps -V /var/app/volatility3/vol.py"
     os.system(cmd)
 
     # remove dump
-    win_dump_path = "/var/app/webapp/dumps/" + ip + "/" + datetime
+    win_dump_path = "/var/app/dumps/" + ip + "/" + datetime
 
     if os.path.exists(win_dump_path):
         os.remove(win_dump_path)
 
-    local_dump_path = "/var/app/webapp/dumps/" + datetime
+    local_dump_path = "/var/app/dumps/" + datetime
 
     if os.path.exists(local_dump_path):
         os.remove(local_dump_path)
 
     # Unmount Windows Dump Shared Directory
-    cmd = "umount /var/app/webapp/dumps/" + ip
+    cmd = "umount /var/app/dumps/" + ip
     os.system(cmd)
 
     return
