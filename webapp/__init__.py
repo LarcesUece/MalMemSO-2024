@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 
-import dump_analysis
+import detect
 import register
 import respond
 
