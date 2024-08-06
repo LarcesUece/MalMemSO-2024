@@ -2,6 +2,9 @@
 
 ## Setup Windows Agent
 
+Install python3
+'https://www.python.org/downloads/'
+
 Create and share folder Documents/Dumps on current user home
 
 Copy dump.py to Documents/Dumps
