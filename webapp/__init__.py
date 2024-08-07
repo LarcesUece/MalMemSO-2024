@@ -42,6 +42,7 @@ def create_app(test_config=None):
         try:
             is_detected = analysis(ip, datetime)
         except:
+            print("Error")
             return "Error"
 
         # record on big query the analysis
@@ -49,9 +50,10 @@ def create_app(test_config=None):
 
         # if a malware is detected, respond to host
         if is_detected:
-            respond.disable_host_network(ip)
+            #respond.disable_host_network(ip)
+            print("A malware was detected")
 
-        return
+        return ""
 
 
     return app

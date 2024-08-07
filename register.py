@@ -16,13 +16,20 @@ def on_bigquery(hostname, ip, datetime, is_detected):
 
     # JSON key provided by Google
     json_key = 'malware-detection-422423-bde15ff25756.json'
-
-    client = bigquery.Client(json_key_file=json_key)
+    try:
+        client = bigquery.Client(json_key_file=json_key)
+    except:
+        print("Was not possible to register")
+        return
 
     rows =  [
         {'hostname': hostname, 'ip': ip, "is_malware_detected": is_detected,  "timestamp": datetime} ]
     print("Recording")
     # Insert data into table.
-    inserted = client.push_rows(dataset, table, rows)
+    try:
+        inserted = client.push_rows(dataset, table, rows)
+    except:
+        print("Was not possible to register")
+        pass
     
     return

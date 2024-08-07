@@ -7,6 +7,7 @@ import pandas as pd
 #from datetime import datetime
 import pickle
 import os
+import time
 
 mean_data = {"pslist.nproc" : 41.39477097412793,
              "pslist.nppid" : 14.713837121987849,
@@ -56,53 +57,71 @@ def extract_features_from_dump(ip, datetime):
     win_user_login = "suporte"
     win_user_passwd = "123456"
 
-    print("Init dump copy")
+    print("mount windows dir")
     # mount Windows Dump Shared Directory
-    cmd = "mount -t cifs //" + ip + "/Users/suporte/Documents/Dumps /var/app/dumps/" + ip + " -o username=" + win_user_login + ",password=" + win_user_passwd
+    cmd = "mount -t cifs //" + ip + "/Users/teste/Documents/Dumps /var/app/dumps/" + ip + " -o username=" + win_user_login + ",password=" + win_user_passwd
     os.system(cmd)
-
+    
+    print("copy dump")
     # copy dump to work directory
-    cmd = "mv /var/app/dumps/"+ ip + "/" + datetime + ".tar.gz " + "/var/app/dumps/" 
+    cmd = "cp /var/app/dumps/"+ ip + "/" + datetime + ".tar.gz " + "/var/app/dumps/" 
     os.system(cmd)
-  
-    print("Init uncompress dump")
+    #time.sleep(120)
+
+    print("uncompress dump")
     # uncompress dump
-    cmd = "tar -xzvf /var/app/dumps/" + datetime + ".tar.gz" #-C tmp/
+    cmd = "tar -xzvf /var/app/dumps/" + datetime + ".tar.gz /var/app/dumps/" 
+    os.system(cmd)
+    
+    print("change dump extension")
+    cmd = "mv /var/app/" + datetime + " /var/app/dumps/" + datetime + ".raw"
     os.system(cmd)
   
-    cmd = "mv /var/app/dumps/" + datetime + " /var/app/dumps/" + datetime +".raw" #-C tmp/
+    print("remove tar gz dump")
+    cmd = "rm /var/app/dumps/" + datetime + ".tar.gz"
     os.system(cmd)
-  
-    print("Init features extraction")
+    
+    #cmd = "mv " + datetime + " /var/app/dumps/" + datetime + ".raw"
+    #os.system(cmd)
+
+    #print("Remove Windows Dump")
+    # remove windows dump
+    #win_dump_path = "/var/app/dumps/" + ip + "/" + datetime
+
+    #if os.path.exists(win_dump_path):
+    #    os.remove(win_dump_path)
+
+
+    print("umount Windows")
+    # Unmount Windows Dump Shared Directory
+    cmd = "umount /var/app/dumps/" + ip
+    os.system(cmd)
+
+    print("extract features")
     # extract features from dump
-    cmd = "python3 VolMemLyzer/VolMemLyzer-V2.py -f /var/app/dumps -o /var/app/dumps -V /var/app/volatility3/vol.py"
+    cmd = "python3 /var/app/VolMemLyzer/VolMemLyzer-V2.py -f /var/app/dumps/ -o /var/app/dumps/ -V /var/app/volatility3/vol.py"
     os.system(cmd)
 
-    # remove dump
-    win_dump_path = "/var/app/dumps/" + ip + "/" + datetime
-
-    if os.path.exists(win_dump_path):
-        os.remove(win_dump_path)
-
+    # remove local dump 
     local_dump_path = "/var/app/dumps/" + datetime
 
     if os.path.exists(local_dump_path):
         os.remove(local_dump_path)
-
-    # Unmount Windows Dump Shared Directory
-    cmd = "umount /var/app/dumps/" + ip
-    os.system(cmd)
 
     return
 
 def analysis(ip, datetime):
     extract_features_from_dump(ip, datetime)
 
-    print("Init classification")
-    pkl_filename = "cart_model.pkl"
-    loaded_model = pickle.load(open(pkl_filename, 'rb'))
-
-    x = pd.read_csv("output.csv")
+    #print("init classification")
+    print("load model")
+    pkl_filename = "cart_model_v2.pkl"
+    pkl = open(pkl_filename, 'rb')
+    
+    loaded_model = pickle.load(pkl)
+    
+    print("read features")
+    x = pd.read_csv("dumps/output.csv")
     x = x[["callbacks.ncallbacks", "dlllist.avg_dllPerProc", "dlllist.ndlls","handles.avgHandles_per_proc", "handles.nTypeDesk","handles.nTypeDir","handles.nTypeEvent","handles.nTypeFile",
             "handles.nHandles","handles.nTypeKey", "handles.nTypeMutant", "handles.nTypePort","handles.nTypeSec", "handles.nTypeSemaph", "handles.nTypeThread", "handles.nTypeTimer",
             "ldrmodules.not_in_init", "ldrmodules.not_in_init_avg", "ldrmodules.not_in_load", "ldrmodules.not_in_load_avg", "ldrmodules.not_in_mem", "ldrmodules.not_in_mem_avg",
@@ -117,13 +136,16 @@ def analysis(ip, datetime):
                        "svcscan.Type_Share" : "svcscan.shared_process_services"})
 
     # Replace Nan of the output with column mean value
+    print("process data")
     x.fillna(mean_data, inplace=True)
 
     # Order columns
     x = x.sort_index(axis=1)
     
+    print("predict")
     y_pred = loaded_model.predict(x)
-    
+    print(y_pred)
+    print(y_pred[0])
     if(y_pred[0] == 1):
         print("A malware was found.")  
         return True
