@@ -14,7 +14,7 @@ def export_dump():
     print("Init dumpIt")
     print(datetime.now())
     # Exporting the memory dump
-    cmd = "lib/DumpIt.exe /Q /N /O " + current_datetime
+    cmd = "lib\DumpIt.exe /Q /N /O " + current_datetime
     os.system(cmd)
     print("End dumpIt")
     print(datetime.now())
