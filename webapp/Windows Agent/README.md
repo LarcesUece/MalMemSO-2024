@@ -5,6 +5,12 @@
 Install python3
 'https://www.python.org/downloads/'
 
+Install pip
+
+Install requests
+
+'pip3 install requests'
+
 Enable Windows Subsystem Linux
 
 Create and share folder Documents/Dumps on current user home
