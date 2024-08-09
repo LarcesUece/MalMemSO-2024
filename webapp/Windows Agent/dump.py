@@ -44,7 +44,12 @@ def request_mem_analysis(export_datetime):
     # send request
     post_obj = {"ip": ip_address, "hostname": hostname, "datetime": export_datetime }
     req  = requests.post(url, post_obj)
+    
+    # remove tar
+    cmd = "del " + export_datetime + ".tar.gz"
+    os.system(cmd)
 
+    # respond
     if(req.text == "A malware was detected"):
         print("A malware was detected")
         print("Disabling network interfaces")
