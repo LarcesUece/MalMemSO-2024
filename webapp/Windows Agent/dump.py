@@ -30,11 +30,8 @@ def export_dump():
     print("End TAR")
     print(datetime.now())
     
-    # Wait to compress the file
-    #time.sleep(60)
-    
-    # Delete original dump and keep the compressed file
-    #remove_file(current_datetime)
+    cmd = "tar -czvf " + current_datetime
+    os.system(cmd)
 
     return current_datetime
 
