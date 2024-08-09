@@ -4,7 +4,7 @@ import socket
 import requests
 from datetime import datetime
 
-FOG_URL = "http://192.168.0.13:5000/detect"
+FOG_URL = "http://192.168.0.11:5000/detect"
 
 # Function to export current memory dump and returns dump file name 
 def export_dump():
