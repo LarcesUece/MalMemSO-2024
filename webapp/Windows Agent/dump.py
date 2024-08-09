@@ -44,6 +44,14 @@ def request_mem_analysis(export_datetime):
     # send request
     post_obj = {"ip": ip_address, "hostname": hostname, "datetime": export_datetime }
     req  = requests.post(url, post_obj)
+
+    if(req.text == "A malware was detected"):
+        print("A malware was detected")
+        print("Disabling network interfaces")
+        cmd =  "Disable-NetAdapter -Name '*' -Confirm:$False"
+        os.system(cmd)
+    else:
+        print("No malware was detected")
     
 
 # Export dump   
