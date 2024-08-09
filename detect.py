@@ -59,7 +59,7 @@ def extract_features_from_dump(ip, datetime):
 
     print("mount windows dir")
     # mount Windows Dump Shared Directory
-    cmd = "mount -t cifs //" + ip + "/Users/teste/Documents/Dumps /var/app/dumps/" + ip + " -o username=" + win_user_login + ",password=" + win_user_passwd
+    cmd = "mount -t cifs //" + ip + "/Users/suporte/Documents/Dumps /var/app/dumps/" + ip + " -o username=" + win_user_login + ",password=" + win_user_passwd
     os.system(cmd)
     
     print("copy dump")
@@ -70,7 +70,7 @@ def extract_features_from_dump(ip, datetime):
 
     print("uncompress dump")
     # uncompress dump
-    cmd = "tar -xzvf /var/app/dumps/" + datetime + ".tar.gz /var/app/dumps/" 
+    cmd = "tar -xzvf /var/app/dumps/" + datetime + ".tar.gz" 
     os.system(cmd)
     
     print("change dump extension")
