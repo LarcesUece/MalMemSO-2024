@@ -52,8 +52,9 @@ def create_app(test_config=None):
         if is_detected:
             #respond.disable_host_network(ip)
             print("A malware was detected")
+            return "A malware was detected"
 
-        return ""
+        return "No malware was detected"
 
 
     return app
