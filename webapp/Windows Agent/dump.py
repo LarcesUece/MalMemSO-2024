@@ -53,8 +53,7 @@ def request_mem_analysis(export_datetime):
     if(req.text == "A malware was detected"):
         print("A malware was detected")
         print("Disabling network interfaces")
-        cmd =  "Disable-NetAdapter -Name '*' -Confirm:$False"
-        os.system(cmd)
+        net =  os.popen("netsh interface set interface Ethernet0 admin=enable").read()
     else:
         print("No malware was detected")
     
