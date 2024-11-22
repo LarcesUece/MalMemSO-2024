@@ -1,8 +1,9 @@
 from argparse import ArgumentParser
-from logging import basicConfig, INFO
-from os import pardir
-from os.path import dirname, realpath, abspath, join
+from logging import basicConfig, INFO, error, info
+from os import makedirs
+from os.path import abspath, join, isdir
 
+from utils import COMPRESSED_PATH, RAW_PATH, LOGS_PATH, X64_PATH, X86_PATH
 from dump_extractor import (
     extract_dump,
     TOOL_DEFAULT,
@@ -11,13 +12,44 @@ from dump_extractor import (
     ARCH_OPTIONS,
 )
 
-CURRENT_PATH = dirname(realpath(__file__))
-LOGS_PATH = abspath(join(CURRENT_PATH, pardir, "logs"))
-RAW_PATH = abspath(join(CURRENT_PATH, pardir, "dumps", "raw"))
+LOG_FILE_PATH = abspath(join(LOGS_PATH, "main.log"))
+
+
+def _create_log_folder():
+    """Create the folder for the log files."""
+
+    if not isdir(LOGS_PATH):
+        makedirs(LOGS_PATH)
+        info(f"Created folder {LOGS_PATH}")
+
+
+def _init_project():
+    """Create necessary folders and check for required files."""
+
+    info("Initializing project")
+
+    if not isdir(X64_PATH) or not isdir(X86_PATH):
+        error("Missing bin folder with memory dump tools executable files")
+        raise SystemExit
+
+    if not isdir(COMPRESSED_PATH):
+        makedirs(COMPRESSED_PATH)
+        info(f"Created folder {COMPRESSED_PATH}")
+
+    if not isdir(RAW_PATH):
+        makedirs(RAW_PATH)
+        info(f"Created folder {RAW_PATH}")
+
+    info("All folders are ready")
+
 
 if __name__ == "__main__":
+    """Initialize the project and call all the program functions."""
+
+    _create_log_folder()
+
     basicConfig(
-        filename="logs/main.log",
+        filename=LOG_FILE_PATH,
         level=INFO,
         format="%(asctime)s - %(levelname)s - %(message)s",
     )
@@ -42,4 +74,5 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
+    _init_project()
     extract_dump(args.tool, args.arch)

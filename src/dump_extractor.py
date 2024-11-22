@@ -1,15 +1,12 @@
 from argparse import ArgumentParser
-from logging import basicConfig, info, error, INFO
-from os import pardir, listdir, remove
-from os.path import dirname, realpath, abspath, join, exists
+from logging import basicConfig, info, error, INFO, warning
+from os import listdir, remove, stat
+from os.path import join, exists
 from subprocess import Popen, PIPE, CalledProcessError
 
-# PATHS
-CURRENT_PATH = dirname(realpath(__file__))
-X64_PATH = abspath(join(CURRENT_PATH, pardir, "bin", "x64"))
-X86_PATH = abspath(join(CURRENT_PATH, pardir, "bin", "x86"))
-LOGS_PATH = abspath(join(CURRENT_PATH, pardir, "logs"))
-RAW_PATH = abspath(join(CURRENT_PATH, pardir, "dumps", "raw"))
+from utils import X64_PATH, X86_PATH, RAW_PATH, LOGS_PATH
+
+LOG_FILE_PATH = join(LOGS_PATH, "dump_extractor.log")
 
 # OPTIONS
 TOOL_OPTIONS = ["winpmem", "dumpit"]
@@ -20,6 +17,8 @@ ARCH_DEFAULT = "x64"
 
 def _get_command(tool, tool_path, output_path):
     """Get the command to execute the memory dump tool."""
+
+    info(f"Getting command for {tool.capitalize()} tool")
 
     COMMANDS = {
         "winpmem": [tool_path, output_path],
@@ -38,6 +37,8 @@ def _get_output_path(tool, arch):
     - number: Next available number for the memory dump file.
     """
 
+    info("Getting output path for memory dump file")
+
     files = listdir(RAW_PATH)
     files = [f for f in files if f.startswith(f"dump_{tool}_{arch}")]
     numbers = [int(f.split("_")[-1].split(".")[0]) for f in files]
@@ -46,14 +47,24 @@ def _get_output_path(tool, arch):
     return join(RAW_PATH, f"dump_{tool}_{arch}_{number}.raw")
 
 
+def _delete_file_if_empty(file_path):
+    """Delete a file if it is empty."""
+
+    info(f"Checking if file is empty")
+
+    if exists(file_path):
+        file_size = stat(file_path).st_size
+        if not file_size:
+            warning(f"Deleting empty file {file_path}")
+            remove(file_path)
+
+
 def _delete_corrupted_file(file_path):
     """Delete a corrupted file if it exists."""
 
     if exists(file_path):
-        info(f"Deleting corrupted file {file_path}")
+        warning(f"Deleting corrupted file")
         remove(file_path)
-    else:
-        error(f"File {file_path} not found")
 
 
 def extract_dump(tool=TOOL_DEFAULT, arch=ARCH_DEFAULT):
@@ -65,6 +76,8 @@ def extract_dump(tool=TOOL_DEFAULT, arch=ARCH_DEFAULT):
     tool_path = join(arch_path, f"{tool}.exe")
     output_path = _get_output_path(tool, arch)
     command = _get_command(tool, tool_path, output_path)
+
+    info(f"Running command: {command}")
 
     try:
         process = Popen(
@@ -84,8 +97,11 @@ def extract_dump(tool=TOOL_DEFAULT, arch=ARCH_DEFAULT):
     else:
         if stderr:
             error(f"An error occurred: {stderr}")
-            info(f"Output message: {stdout}")
+
+        info(f"Output message: {stdout}")
         info(f"Memory dump file saved at {output_path}")
+        _delete_file_if_empty(output_path)
+
         process.terminate()
 
 
@@ -93,7 +109,7 @@ if __name__ == "__main__":
     """Log file and argument parser configuration."""
 
     basicConfig(
-        filename=join(LOGS_PATH, "dump_extractor.log"),
+        filename=LOG_FILE_PATH,
         level=INFO,
         format="%(asctime)s - %(levelname)s - %(message)s",
     )
