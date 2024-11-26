@@ -1,18 +1,17 @@
-from argparse import ArgumentParser
-from logging import basicConfig, info, error, INFO, warning
+from logging import info, error, warning
 from os import listdir, remove, stat
 from os.path import join, exists
 from subprocess import Popen, PIPE, CalledProcessError
 
-from utils import X64_PATH, X86_PATH, RAW_PATH, LOGS_PATH
-
-LOG_FILE_PATH = join(LOGS_PATH, "dump_extractor.log")
-
-# OPTIONS
-TOOL_OPTIONS = ["winpmem", "dumpit"]
-TOOL_DEFAULT = "winpmem"
-ARCH_OPTIONS = ["x64", "x86"]
-ARCH_DEFAULT = "x64"
+from utils import (
+    setup_argparser,
+    setup_logging,
+    DUMP_EXTRACTOR_TOOL_DEFAULT,
+    DUMP_EXTRACTOR_ARCH_DEFAULT,
+    X64_PATH,
+    X86_PATH,
+    RAW_PATH,
+)
 
 
 def _get_command(tool, tool_path, output_path):
@@ -67,7 +66,7 @@ def _delete_corrupted_file(file_path):
         remove(file_path)
 
 
-def extract_dump(tool=TOOL_DEFAULT, arch=ARCH_DEFAULT):
+def extract_dump(tool=DUMP_EXTRACTOR_TOOL_DEFAULT, arch=DUMP_EXTRACTOR_ARCH_DEFAULT):
     """Run the memory dump tool."""
 
     info(f"Extracting memory dump using {tool.capitalize()} tool")
@@ -106,34 +105,6 @@ def extract_dump(tool=TOOL_DEFAULT, arch=ARCH_DEFAULT):
 
 
 if __name__ == "__main__":
-    """Log file and argument parser configuration."""
-
-    basicConfig(
-        filename=LOG_FILE_PATH,
-        level=INFO,
-        format="%(asctime)s - %(levelname)s - %(message)s",
-    )
-
-    parser = ArgumentParser(
-        prog="dump_extractor.py",
-        description="Extract a memory dump file to the dumps/raw folder",
-    )
-    parser.add_argument(
-        "-t",
-        "--tool",
-        type=str,
-        default=TOOL_DEFAULT,
-        help="Tool used to extract memory dump file",
-        choices=TOOL_OPTIONS,
-    )
-    parser.add_argument(
-        "-a",
-        "--arch",
-        type=str,
-        default=ARCH_DEFAULT,
-        help="Architecture of the target system",
-        choices=ARCH_OPTIONS,
-    )
-    args = parser.parse_args()
-
-    extract_dump(args.tool, args.arch)
+    setup_logging(custom_filename=True)
+    args = setup_argparser()
+    extract_dump(**vars(args))
