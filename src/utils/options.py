@@ -1,4 +1,4 @@
-# dump_extractor
+# device/dump_extractor
 DUMP_EXTRACTOR_TOOL_OPTIONS = ["winpmem", "dumpit"]
 DUMP_EXTRACTOR_TOOL_DEFAULT = "winpmem"
 DUMP_EXTRACTOR_ARCH_OPTIONS = ["x64", "x86"]

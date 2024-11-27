@@ -2,7 +2,7 @@ from ftplib import FTP
 from logging import error
 from os.path import exists
 
-from utils import setup_argparser, load_config, setup_logging
+from utils import load_config
 
 
 def send_file(filepath):
@@ -46,9 +46,3 @@ def send_file(filepath):
             error_message = "Failed to close FTP connection"
             error(error_message, exc_info=True)
             raise e(error_message)
-
-
-if __name__ == "__main__":
-    setup_logging(custom_filename=True)
-    args = setup_argparser()
-    send_file(**vars(args))

@@ -13,7 +13,7 @@ if __name__ == "__main__":
     setup_logging()
     args = setup_argparser()
 
-    raw_dump_filepath = extract_dump(tool=args.tool, arch=args.arch)
+    raw_dump_filepath = extract_dump(**vars(args))
     compressed_dump_filepath = compress_file(file_path=raw_dump_filepath)
     response = send_file(file_path=compressed_dump_filepath)
 

@@ -4,13 +4,11 @@ from os.path import join, exists
 from subprocess import Popen, PIPE, CalledProcessError
 
 from utils import (
-    setup_argparser,
-    setup_logging,
     DUMP_EXTRACTOR_TOOL_DEFAULT,
     DUMP_EXTRACTOR_ARCH_DEFAULT,
     X64_PATH,
     X86_PATH,
-    RAW_PATH,
+    RAW_DUMPS_PATH,
 )
 
 
@@ -38,12 +36,12 @@ def _get_output_path(tool, arch):
 
     info("Getting output path for memory dump file")
 
-    files = listdir(RAW_PATH)
+    files = listdir(RAW_DUMPS_PATH)
     files = [f for f in files if f.startswith(f"dump_{tool}_{arch}")]
     numbers = [int(f.split("_")[-1].split(".")[0]) for f in files]
     number = max(numbers) + 1 if numbers else 1
 
-    return join(RAW_PATH, f"dump_{tool}_{arch}_{number}.raw")
+    return join(RAW_DUMPS_PATH, f"dump_{tool}_{arch}_{number}.raw")
 
 
 def _delete_file_if_empty(filepath):
@@ -102,9 +100,3 @@ def extract_dump(tool=DUMP_EXTRACTOR_TOOL_DEFAULT, arch=DUMP_EXTRACTOR_ARCH_DEFA
         _delete_file_if_empty(output_path)
 
         process.terminate()
-
-
-if __name__ == "__main__":
-    setup_logging(custom_filename=True)
-    args = setup_argparser()
-    extract_dump(**vars(args))

@@ -10,7 +10,7 @@ DEFAULT_LEVEL = INFO
 DEFAULT_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
 
 
-def setup_logging(custom_filename=False, level=DEFAULT_LEVEL, format=DEFAULT_FORMAT):
+def setup_logging(custom_filename=True, level=DEFAULT_LEVEL, format=DEFAULT_FORMAT):
     """Setup logging configuration for the caller module."""
 
     if not exists(LOGS_PATH):

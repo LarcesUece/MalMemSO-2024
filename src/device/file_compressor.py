@@ -10,7 +10,7 @@ import subprocess
 import time
 import os
 
-from utils import COMPRESSED_PATH, RAW_PATH, LOGS_PATH
+from utils import COMPRESSED_DUMPS_PATH, RAW_DUMPS_PATH, LOGS_PATH
 
 
 def compress_file(filepath):
@@ -276,7 +276,7 @@ def _test_compressors(filepath):
 
 
 def _get_file():
-    for file in os.listdir(RAW_PATH):
+    for file in os.listdir(RAW_DUMPS_PATH):
         if file.endswith(".raw"):
             return file
     return None
@@ -285,7 +285,7 @@ def _get_file():
 if __name__ == "__main__":
     file = _get_file()
     if file:
-        filepath = os.path.join(RAW_PATH, file)
+        filepath = os.path.join(RAW_DUMPS_PATH, file)
         print(f"File: {filepath}")
         # _test_compressors(filepath)
         compress_file(filepath)

@@ -11,51 +11,57 @@ from utils.options import (
 )
 
 PARSER_DESCRIPTION = {
-    "app": "Detect malware using AI through memory dump files",
-    "dump_cleaner": "Clean the dump files directory",
-    "dump_extractor": "Run a tool to extract a dump file",
-    "file_compressor": "Compress a raw dump file",
-    "file_sender": "Send a compressed dump file to the server",
-    "malware_remover": "Remove a malware from the system",
-    "network_disabler": "Disable all the network interfaces",
-    "network_enabler": "Enable all the network interfaces",
+    "cloud": "",
+    "device": "",
+    "fog": "",
+    # "app": "Detect malware using AI through memory dump files",
+    # "dump_cleaner": "Clean the dump files directory",
+    # "dump_extractor": "Run a tool to extract a dump file",
+    # "file_compressor": "Compress a raw dump file",
+    # "file_sender": "Send a compressed dump file to the server",
+    # "malware_remover": "Remove a malware from the system",
+    # "network_disabler": "Disable all the network interfaces",
+    # "network_enabler": "Enable all the network interfaces",
 }
 
 PARSER_ARGS = {
-    "app": {
-        ("-t", "--tool"): {
-            "type": str,
-            "choices": DUMP_EXTRACTOR_TOOL_OPTIONS,
-            "default": DUMP_EXTRACTOR_TOOL_DEFAULT,
-            "help": "Memory dump tool to use",
-        },
-        ("-a", "--arch"): {
-            "type": str,
-            "choices": DUMP_EXTRACTOR_ARCH_OPTIONS,
-            "default": DUMP_EXTRACTOR_ARCH_DEFAULT,
-            "help": "Architecture of the system",
-        },
-    },
-    "dump_cleaner": {},
-    "dump_extractor": {
-        ("-t", "--tool"): {
-            "type": str,
-            "choices": DUMP_EXTRACTOR_TOOL_OPTIONS,
-            "default": DUMP_EXTRACTOR_TOOL_DEFAULT,
-            "help": "Memory dump tool to use",
-        },
-        ("-a", "--arch"): {
-            "type": str,
-            "choices": DUMP_EXTRACTOR_ARCH_OPTIONS,
-            "default": DUMP_EXTRACTOR_ARCH_DEFAULT,
-            "help": "Architecture of the system",
-        },
-    },
-    "file_compressor": {},
-    "file_sender": {"file_path": {"type": str, "help": "Path to the file to be sent"}},
-    "malware_remover": {},
-    "network_disabler": {},
-    "network_enabler": {},
+    "cloud": {},
+    "device": {},
+    "fog": {},
+    # "app": {
+    #     ("-t", "--tool"): {
+    #         "type": str,
+    #         "choices": DUMP_EXTRACTOR_TOOL_OPTIONS,
+    #         "default": DUMP_EXTRACTOR_TOOL_DEFAULT,
+    #         "help": "Memory dump tool to use",
+    #     },
+    #     ("-a", "--arch"): {
+    #         "type": str,
+    #         "choices": DUMP_EXTRACTOR_ARCH_OPTIONS,
+    #         "default": DUMP_EXTRACTOR_ARCH_DEFAULT,
+    #         "help": "Architecture of the system",
+    #     },
+    # },
+    # "dump_cleaner": {},
+    # "dump_extractor": {
+    #     ("-t", "--tool"): {
+    #         "type": str,
+    #         "choices": DUMP_EXTRACTOR_TOOL_OPTIONS,
+    #         "default": DUMP_EXTRACTOR_TOOL_DEFAULT,
+    #         "help": "Memory dump tool to use",
+    #     },
+    #     ("-a", "--arch"): {
+    #         "type": str,
+    #         "choices": DUMP_EXTRACTOR_ARCH_OPTIONS,
+    #         "default": DUMP_EXTRACTOR_ARCH_DEFAULT,
+    #         "help": "Architecture of the system",
+    #     },
+    # },
+    # "file_compressor": {},
+    # "file_sender": {"file_path": {"type": str, "help": "Path to the file to be sent"}},
+    # "malware_remover": {},
+    # "network_disabler": {},
+    # "network_enabler": {},
 }
 
 
