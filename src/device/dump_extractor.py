@@ -46,24 +46,24 @@ def _get_output_path(tool, arch):
     return join(RAW_PATH, f"dump_{tool}_{arch}_{number}.raw")
 
 
-def _delete_file_if_empty(file_path):
+def _delete_file_if_empty(filepath):
     """Delete a file if it is empty."""
 
     info(f"Checking if file is empty")
 
-    if exists(file_path):
-        file_size = stat(file_path).st_size
+    if exists(filepath):
+        file_size = stat(filepath).st_size
         if not file_size:
-            warning(f"Deleting empty file {file_path}")
-            remove(file_path)
+            warning(f"Deleting empty file {filepath}")
+            remove(filepath)
 
 
-def _delete_corrupted_file(file_path):
+def _delete_corrupted_file(filepath):
     """Delete a corrupted file if it exists."""
 
-    if exists(file_path):
+    if exists(filepath):
         warning(f"Deleting corrupted file")
-        remove(file_path)
+        remove(filepath)
 
 
 def extract_dump(tool=DUMP_EXTRACTOR_TOOL_DEFAULT, arch=DUMP_EXTRACTOR_ARCH_DEFAULT):

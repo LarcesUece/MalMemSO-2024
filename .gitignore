@@ -4,3 +4,4 @@ __pycache__/
 *.zip
 *.tar.gz
 config.ini
+venv

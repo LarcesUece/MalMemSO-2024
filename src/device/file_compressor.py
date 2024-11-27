@@ -10,20 +10,20 @@ import subprocess
 import time
 import os
 
-from src.utils.main import COMPRESSED_PATH, RAW_PATH, LOGS_PATH
+from utils import COMPRESSED_PATH, RAW_PATH, LOGS_PATH
 
 
-def compress_file(file_path):
-    file_name = os.path.basename(file_path)
-    file_dir = os.path.dirname(file_path)
-    original_size = os.path.getsize(file_path)
+def compress_file(filepath):
+    file_name = os.path.basename(filepath)
+    file_dir = os.path.dirname(filepath)
+    original_size = os.path.getsize(filepath)
 
     compression_results = []
 
     # Compress using zlib
     try:
         start = time.time()
-        with open(file_path, "rb") as f_in:
+        with open(filepath, "rb") as f_in:
             original_data = f_in.read()
             compressed_data = zlib.compress(original_data, zlib.Z_BEST_COMPRESSION)
         end = time.time()
@@ -41,7 +41,7 @@ def compress_file(file_path):
     # Compress using gzip
     try:
         start = time.time()
-        with open(file_path, "rb") as f_in:
+        with open(filepath, "rb") as f_in:
             with gzip.open(os.path.join(file_dir, file_name + ".gz"), "wb") as f_out:
                 shutil.copyfileobj(f_in, f_out)
         end = time.time()
@@ -57,7 +57,7 @@ def compress_file(file_path):
     # Compress using bz2
     try:
         start = time.time()
-        with open(file_path, "rb") as f_in:
+        with open(filepath, "rb") as f_in:
             with bz2.open(os.path.join(file_dir, file_name + ".bz2"), "wb") as f_out:
                 shutil.copyfileobj(f_in, f_out)
         end = time.time()
@@ -73,7 +73,7 @@ def compress_file(file_path):
     # Compress using lzma
     try:
         start = time.time()
-        with open(file_path, "rb") as f_in:
+        with open(filepath, "rb") as f_in:
             with lzma.open(os.path.join(file_dir, file_name + ".xz"), "wb") as f_out:
                 shutil.copyfileobj(f_in, f_out)
         end = time.time()
@@ -92,7 +92,7 @@ def compress_file(file_path):
         with zipfile.ZipFile(
             os.path.join(file_dir, file_name + ".zip"), "w", zipfile.ZIP_DEFLATED
         ) as zipf:
-            zipf.write(file_path, arcname=file_name)
+            zipf.write(filepath, arcname=file_name)
         end = time.time()
         duration = end - start
         compressed_size = os.path.getsize(os.path.join(file_dir, file_name + ".zip"))
@@ -109,7 +109,7 @@ def compress_file(file_path):
         with tarfile.open(
             os.path.join(file_dir, file_name + ".tar.gz"), "w:gz"
         ) as tarf:
-            tarf.add(file_path, arcname=file_name)
+            tarf.add(filepath, arcname=file_name)
         end = time.time()
         duration = end - start
         compressed_size = os.path.getsize(os.path.join(file_dir, file_name + ".tar.gz"))
@@ -126,7 +126,7 @@ def compress_file(file_path):
         with tarfile.open(
             os.path.join(file_dir, file_name + ".tar.bz2"), "w:bz2"
         ) as tarf:
-            tarf.add(file_path, arcname=file_name)
+            tarf.add(filepath, arcname=file_name)
         end = time.time()
         duration = end - start
         compressed_size = os.path.getsize(
@@ -145,7 +145,7 @@ def compress_file(file_path):
         with tarfile.open(
             os.path.join(file_dir, file_name + ".tar.xz"), "w:xz"
         ) as tarf:
-            tarf.add(file_path, arcname=file_name)
+            tarf.add(filepath, arcname=file_name)
         end = time.time()
         duration = end - start
         compressed_size = os.path.getsize(os.path.join(file_dir, file_name + ".tar.xz"))
@@ -169,14 +169,14 @@ def compress_file(file_path):
         )
 
 
-def _test_compressors(file_path):
-    file_name = os.path.basename(file_path)
-    file_dir = os.path.dirname(file_path)
+def _test_compressors(filepath):
+    file_name = os.path.basename(filepath)
+    file_dir = os.path.dirname(filepath)
 
     # Compress using zlib
     start = time()
     try:
-        with open(file_path, "rb") as f_in:
+        with open(filepath, "rb") as f_in:
             with open(os.path.join(file_dir, file_name + ".zlib"), "wb") as f_out:
                 f_out.write(zlib.compress(f_in.read()))
     except Exception as e:
@@ -186,7 +186,7 @@ def _test_compressors(file_path):
 
     # Compress using gzip
     try:
-        with open(file_path, "rb") as f_in:
+        with open(filepath, "rb") as f_in:
             with gzip.open(os.path.join(file_dir, file_name + ".gz"), "wb") as f_out:
                 shutil.copyfileobj(f_in, f_out)
     except Exception as e:
@@ -195,7 +195,7 @@ def _test_compressors(file_path):
     # Compress using bz2
     start = time()
     try:
-        with open(file_path, "rb") as f_in:
+        with open(filepath, "rb") as f_in:
             with bz2.open(os.path.join(file_dir, file_name + ".bz2"), "wb") as f_out:
                 shutil.copyfileobj(f_in, f_out)
     except Exception as e:
@@ -206,7 +206,7 @@ def _test_compressors(file_path):
     # Compress using lzma
     start = time()
     try:
-        with open(file_path, "rb") as f_in:
+        with open(filepath, "rb") as f_in:
             with lzma.open(os.path.join(file_dir, file_name + ".xz"), "wb") as f_out:
                 shutil.copyfileobj(f_in, f_out)
     except Exception as e:
@@ -220,7 +220,7 @@ def _test_compressors(file_path):
         with zipfile.ZipFile(
             os.path.join(file_dir, file_name + ".zip"), "w", zipfile.ZIP_DEFLATED
         ) as zipf:
-            zipf.write(file_path, arcname=file_name)
+            zipf.write(filepath, arcname=file_name)
     except Exception as e:
         print(e)
     end = time()
@@ -232,7 +232,7 @@ def _test_compressors(file_path):
         with tarfile.open(
             os.path.join(file_dir, file_name + ".tar.gz"), "w:gz"
         ) as tarf:
-            tarf.add(file_path, arcname=file_name)
+            tarf.add(filepath, arcname=file_name)
     except Exception as e:
         print(e)
     end = time()
@@ -244,7 +244,7 @@ def _test_compressors(file_path):
         with tarfile.open(
             os.path.join(file_dir, file_name + ".tar.bz2"), "w:bz2"
         ) as tarf:
-            tarf.add(file_path, arcname=file_name)
+            tarf.add(filepath, arcname=file_name)
     except Exception as e:
         print(e)
     end = time()
@@ -256,7 +256,7 @@ def _test_compressors(file_path):
         with tarfile.open(
             os.path.join(file_dir, file_name + ".tar.xz"), "w:xz"
         ) as tarf:
-            tarf.add(file_path, arcname=file_name)
+            tarf.add(filepath, arcname=file_name)
     except Exception as e:
         print(e)
     end = time()
@@ -264,7 +264,7 @@ def _test_compressors(file_path):
 
     # # zlib
     # start = time()
-    # original_data = open(file_path, "rb").read()
+    # original_data = open(filepath, "rb").read()
     # compressed_file = zlib.compress(original_data, zlib.Z_BEST_COMPRESSION)
     # end = time()
     # compress_ratio = (float(len(original_data)) - float(len(compressed_file))) / float(
@@ -285,9 +285,9 @@ def _get_file():
 if __name__ == "__main__":
     file = _get_file()
     if file:
-        file_path = os.path.join(RAW_PATH, file)
-        print(f"File: {file_path}")
-        # _test_compressors(file_path)
-        compress_file(file_path)
+        filepath = os.path.join(RAW_PATH, file)
+        print(f"File: {filepath}")
+        # _test_compressors(filepath)
+        compress_file(filepath)
     else:
         print("No file found")

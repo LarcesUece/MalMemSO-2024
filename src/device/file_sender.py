@@ -5,11 +5,11 @@ from os.path import exists
 from utils import setup_argparser, load_config, setup_logging
 
 
-def send_file(file_path):
+def send_file(filepath):
     """Send a file to a remote server using FTP."""
 
-    if not exists(file_path):
-        error_message = f"File not found at {file_path}"
+    if not exists(filepath):
+        error_message = f"File not found at {filepath}"
         error(error_message)
         raise FileNotFoundError(error_message)
 
@@ -33,8 +33,8 @@ def send_file(file_path):
         ftp.login(USERNAME, PASSWORD)
         ftp.cwd(ENDPOINT)
 
-        with open(file_path, "rb") as f:
-            ftp.storbinary(f"STOR {file_path}", f)
+        with open(filepath, "rb") as f:
+            ftp.storbinary(f"STOR {filepath}", f)
     except Exception as e:
         error_message = "Failed to send file"
         error(error_message, exc_info=True)
