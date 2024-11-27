@@ -54,6 +54,7 @@ def _delete_file_if_empty(filepath):
         if not file_size:
             warning(f"Deleting empty file {filepath}")
             remove(filepath)
+            raise Exception("Empty file")
 
 
 def _delete_corrupted_file(filepath):
@@ -88,15 +89,20 @@ def extract_dump(tool=DUMP_EXTRACTOR_TOOL_DEFAULT, arch=DUMP_EXTRACTOR_ARCH_DEFA
     except CalledProcessError as e:
         error(f"A subprocess error occurred: {e}")
         _delete_corrupted_file(output_path)
+        raise e
     except Exception as e:
         error(f"An unexpected error occurred: {e}")
         _delete_corrupted_file(output_path)
+        raise e
     else:
         if stderr:
             error(f"An error occurred: {stderr}")
+            raise stderr
 
         info(f"Output message: {stdout}")
         info(f"Memory dump file saved at {output_path}")
         _delete_file_if_empty(output_path)
 
         process.terminate()
+
+    return output_path

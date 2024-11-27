@@ -14,8 +14,8 @@ if __name__ == "__main__":
     args = setup_argparser()
 
     raw_dump_filepath = extract_dump(**vars(args))
-    compressed_dump_filepath = compress_file(file_path=raw_dump_filepath)
-    response = send_file(file_path=compressed_dump_filepath)
+    compressed_dump_filepath = compress_file(raw_dump_filepath)
+    response = send_file(compressed_dump_filepath)
 
     if response:
         disable_network()
