@@ -1,4 +1,11 @@
-# device/dump_extractor
+FOG_SERVER = "localhost"
+FOG_PORT = 5000
+FOG_USERNAME = "username"
+FOG_PASSWORD = "password"
+FOG_ENDPOINT = "upload"
+
+# DO NOT EDIT BELOW THIS LINE
+
 DUMP_EXTRACTOR_TOOL_OPTIONS = ["winpmem", "dumpit"]
 DUMP_EXTRACTOR_TOOL_DEFAULT = "winpmem"
 DUMP_EXTRACTOR_ARCH_OPTIONS = ["x64", "x86"]

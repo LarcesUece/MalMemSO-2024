@@ -3,13 +3,13 @@ from os import listdir, remove, stat
 from os.path import join, exists
 from subprocess import Popen, PIPE, CalledProcessError
 
-from utils import (
-    DUMP_EXTRACTOR_TOOL_DEFAULT,
+from config import (
     DUMP_EXTRACTOR_ARCH_DEFAULT,
-    X64_PATH,
-    X86_PATH,
-    RAW_DUMPS_PATH,
+    DUMP_EXTRACTOR_ARCH_OPTIONS,
+    DUMP_EXTRACTOR_TOOL_DEFAULT,
+    DUMP_EXTRACTOR_TOOL_OPTIONS,
 )
+from utils import BIN_PATH, RAW_PATH
 
 
 def _get_command(tool, tool_path, output_path):
@@ -36,12 +36,12 @@ def _get_output_path(tool, arch):
 
     info("Getting output path for memory dump file")
 
-    files = listdir(RAW_DUMPS_PATH)
+    files = listdir(RAW_PATH)
     files = [f for f in files if f.startswith(f"dump_{tool}_{arch}")]
     numbers = [int(f.split("_")[-1].split(".")[0]) for f in files]
     number = max(numbers) + 1 if numbers else 1
 
-    return join(RAW_DUMPS_PATH, f"dump_{tool}_{arch}_{number}.raw")
+    return join(RAW_PATH, f"dump_{tool}_{arch}_{number}.raw")
 
 
 def _delete_file_if_empty(filepath):
@@ -70,8 +70,10 @@ def extract_dump(tool=DUMP_EXTRACTOR_TOOL_DEFAULT, arch=DUMP_EXTRACTOR_ARCH_DEFA
 
     info(f"Extracting memory dump using {tool.capitalize()} tool")
 
-    arch_path = X64_PATH if arch == "x64" else X86_PATH
-    tool_path = join(arch_path, f"{tool}.exe")
+    arch = "x64"
+    arch_path = BIN_PATH  # temporary
+    # arch_path = X64_PATH if arch == "x64" else X86_PATH
+    tool_path = join(arch_path, f"{tool}_{arch}.exe")
     output_path = _get_output_path(tool, arch)
     command = _get_command(tool, tool_path, output_path)
 

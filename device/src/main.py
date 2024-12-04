@@ -1,5 +1,5 @@
 from utils import setup_argparser, setup_logging
-from device import (
+from modules import (
     extract_dump,
     compress_file,
     send_file,

@@ -3,7 +3,7 @@ from inspect import stack
 from logging import error
 from os.path import basename, splitext
 
-from .options import (
+from config import (
     DUMP_EXTRACTOR_ARCH_OPTIONS,
     DUMP_EXTRACTOR_TOOL_OPTIONS,
     DUMP_EXTRACTOR_TOOL_DEFAULT,
@@ -12,7 +12,7 @@ from .options import (
 
 PARSER_DESCRIPTION = {
     "cloud": "",
-    "device": "",
+    "main": "",
     "fog": "",
     # "app": "Detect malware using AI through memory dump files",
     # "dump_cleaner": "Clean the dump files directory",
@@ -26,7 +26,7 @@ PARSER_DESCRIPTION = {
 
 PARSER_ARGS = {
     "cloud": {},
-    "device": {},
+    "main": {},
     "fog": {},
     # "app": {
     #     ("-t", "--tool"): {
