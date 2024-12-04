@@ -3,7 +3,7 @@ from logging import INFO, basicConfig, error
 from os import makedirs
 from os.path import join, exists, splitext
 
-from utils.paths import LOGS_PATH, SRC_PATH
+from .paths import LOGS_PATH, SRC_PATH
 
 DEFAULT_FILENAME = "default"
 DEFAULT_LEVEL = INFO

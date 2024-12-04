@@ -2,7 +2,7 @@ from configparser import ConfigParser
 from logging import error
 from os.path import exists
 
-from utils.paths import INI_PATH, INI_EXAMPLE_PATH
+from .paths import INI_PATH, INI_EXAMPLE_PATH
 
 
 def load_config(config_file=INI_PATH):

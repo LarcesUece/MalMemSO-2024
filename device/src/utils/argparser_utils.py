@@ -3,7 +3,7 @@ from inspect import stack
 from logging import error
 from os.path import basename, splitext
 
-from utils.options import (
+from .options import (
     DUMP_EXTRACTOR_ARCH_OPTIONS,
     DUMP_EXTRACTOR_TOOL_OPTIONS,
     DUMP_EXTRACTOR_TOOL_DEFAULT,
