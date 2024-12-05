@@ -2,11 +2,18 @@
 
 A complete tool for malware detection and containment.
 
+## table of contents
+
+- [repository structure](#repository-structure)
+  - [device](#device)
+  - [fog](#fog)
+  - [cloud](#cloud)
+
 ## repository structure
 
 This repository contains three distinct projects, organized into separate folders, that together form the complete malware detection system. Each project is designed to run in a specific environment:
 
-### device/
+### device
 
 This folder contains the code that runs on end devices. It is responsible for extracting memory dumps, compressing them, and sending them to the Fog layer. If malware is detected, the device will handle the situation locally.
 
@@ -14,7 +21,7 @@ This folder contains the code that runs on end devices. It is responsible for ex
 - Environment: Windows 10.
 - Technologies: Python.
 
-### fog/
+### fog
 
 This folder contains the code for the intermediate layer, which analyzes the memory dumps received from devices and classifies them using a pre-trained model provided by the Cloud layer. The classification result determines whether malware is present.
 
@@ -22,7 +29,7 @@ This folder contains the code for the intermediate layer, which analyzes the mem
 - Environment:
 - Technologies: Flask
 
-### cloud/
+### cloud
 
 This folder contains the cloud-level project, which trains and updates the machine learning model used for malware detection. The trained model is then sent to the Fog layer for real-time analysis and classification.
 
