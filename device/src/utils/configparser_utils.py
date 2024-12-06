@@ -22,3 +22,21 @@ def load_config(config_file=INI_PATH):
     config = ConfigParser()
     config.read(config_file)
     return config
+
+
+def validate_server_data(data):
+    if not data:
+        error_message = "Server data is missing."
+        error(error_message)
+        raise ValueError(error_message)
+
+    for key in ["server", "port", "username", "password", "endpoint"]:
+        if key not in data:
+            error_message = f"Server data is missing key: {key}"
+            error(error_message)
+            raise ValueError(error_message)
+
+        if not data[key]:
+            error_message = f"Server data key is empty: {key}."
+            error(error_message)
+            raise ValueError(error_message)

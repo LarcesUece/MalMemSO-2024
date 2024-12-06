@@ -1,53 +1,71 @@
-from inspect import stack
-from logging import INFO, basicConfig, error
-from os import makedirs
-from os.path import join, exists, splitext
+from logging import (
+    basicConfig,
+    error,
+    NOTSET,
+    DEBUG,
+    INFO,
+    WARN,
+    WARNING,
+    ERROR,
+    FATAL,
+    CRITICAL,
+)
+from os.path import join
 
-from .paths import LOGS_PATH, SRC_PATH
-
-DEFAULT_FILENAME = "default"
-DEFAULT_LEVEL = INFO
-DEFAULT_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
+from .paths import LOGS_PATH
+from .utils import create_dir
 
 
-def setup_logging(custom_filename=True, level=DEFAULT_LEVEL, format=DEFAULT_FORMAT):
+def setup_logging(data=None):
     """Setup logging configuration for the caller module."""
 
-    if not exists(LOGS_PATH):
-        try:
-            makedirs(LOGS_PATH)
-        except:
-            error_message = f"Failed to create logs directory at {LOGS_PATH}"
-            error(error_message)
-            raise PermissionError(error_message)
+    _validate_data(data)
+    create_dir(LOGS_PATH)
 
-    if custom_filename:
-        caller_file = stack()[1].filename
-        filename = _get_log_filename(caller_file)
-    else:
-        filename = DEFAULT_FILENAME
-
-    filepath = join(LOGS_PATH, filename + ".log")
+    filepath = join(LOGS_PATH, data["filename"] + ".log")
 
     basicConfig(
         filename=filepath,
-        level=level,
-        format=format,
+        level=_get_level(data["level"]),
+        format=data["format"],
     )
 
 
-def _get_log_filename(caller_file=None):
-    """Generate a log filename based on the caller file path."""
-
-    if not caller_file:
-        error_message = "Caller file not provided"
+def _validate_data(data=None):
+    if not data:
+        error_message = "No logging data provided."
         error(error_message)
         raise ValueError(error_message)
 
-    log_filename = caller_file.replace(SRC_PATH, "")
-    log_filename = splitext(log_filename)[0]
-    log_filename = log_filename.replace("/", "_")
-    log_filename = log_filename.replace("\\", "_")
-    log_filename = log_filename[1:] if log_filename[0] == "_" else log_filename
+    if not isinstance(data, dict):
+        error_message = "Logging data must be a dictionary."
+        error(error_message)
+        raise TypeError(error_message)
 
-    return log_filename
+    for key in ["level", "filename", "format"]:
+        if key not in data:
+            error_message = f"Missing key in data: {key}"
+            error(error_message)
+            raise ValueError(error_message)
+
+
+def _get_level(level):
+    match level:
+        case "notset":
+            return NOTSET
+        case "debug":
+            return DEBUG
+        case "info":
+            return INFO
+        case "warn":
+            return WARN
+        case "warning":
+            return WARNING
+        case "error":
+            return ERROR
+        case "fatal":
+            return FATAL
+        case "critical":
+            return CRITICAL
+        case _:
+            return INFO

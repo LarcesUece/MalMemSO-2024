@@ -1,18 +1,60 @@
-from logging import info, error, warning
-from os import listdir, remove, stat
+from logging import info, error
+from os import listdir, stat
 from os.path import join, exists
 from subprocess import Popen, PIPE, CalledProcessError
 
-from config import (
-    DUMP_EXTRACTOR_ARCH_DEFAULT,
-    DUMP_EXTRACTOR_ARCH_OPTIONS,
-    DUMP_EXTRACTOR_TOOL_DEFAULT,
-    DUMP_EXTRACTOR_TOOL_OPTIONS,
-)
-from utils import BIN_PATH, RAW_PATH
+from utils import BIN_PATH, RAW_PATH, create_dir, delete_file
 
 
-def _get_command(tool, tool_path, output_path):
+def extract_dump(tool=None, arch=None):
+    """Run the memory dump tool."""
+
+    formatted_arch = _validate_extract_dump_args(tool, arch)
+
+    info(f"Extracting memory dump using {tool.capitalize()} tool.")
+
+    tool_path = join(BIN_PATH, f"{tool}_{formatted_arch}.exe")
+    output_path = _get_output_path(tool, formatted_arch)
+    command = _get_tool_command(tool, tool_path, output_path)
+
+    info(f"Running command: {command}.")
+    extraction_error = False
+
+    try:
+        process = Popen(
+            command,
+            stdout=PIPE,
+            stderr=PIPE,
+            text=True,
+            encoding="utf-8",
+        )
+        stdout, stderr = process.communicate()
+    except CalledProcessError as e:
+        error_message = f"A subprocess error occurred: {e}."
+        error(error_message)
+        extraction_error = True
+    except Exception as e:
+        error_message = f"An unexpected error occurred: {e}."
+        error(error_message)
+        extraction_error = True
+    else:
+        if stderr or _is_dump_empty(output_path) or (not stderr and not stdout):
+            error_message = "An error occurred during memory dump extraction."
+            error(error_message)
+            extraction_error = True
+        process.terminate()
+
+    if extraction_error:
+        delete_file(output_path)
+        raise Exception(error_message)
+
+    info(f"Output message: {stdout}")
+    info(f"Memory dump file saved at {output_path}.")
+
+    return output_path
+
+
+def _get_tool_command(tool, tool_path, output_path):
     """Get the command to execute the memory dump tool."""
 
     info(f"Getting command for {tool.capitalize()} tool")
@@ -21,6 +63,11 @@ def _get_command(tool, tool_path, output_path):
         "winpmem": [tool_path, output_path],
         "dumpit": [tool_path, "/OUTPUT", output_path, "/Q"],
     }
+
+    if tool not in COMMANDS:
+        error_message = f"Tool not supported: {tool}."
+        error(error_message)
+        raise ValueError(error_message)
 
     return COMMANDS[tool]
 
@@ -34,77 +81,54 @@ def _get_output_path(tool, arch):
     - number: Next available number for the memory dump file.
     """
 
+    if not exists(RAW_PATH):
+        try:
+            create_dir(RAW_PATH)
+        except:
+            error_message = "Failed to create raw output directory."
+            error(error_message)
+            raise PermissionError(error_message)
+
     info("Getting output path for memory dump file")
 
     files = listdir(RAW_PATH)
-    files = [f for f in files if f.startswith(f"dump_{tool}_{arch}")]
+    files = [f for f in files if f.startswith(f"dump_{tool}_{arch}_")]
     numbers = [int(f.split("_")[-1].split(".")[0]) for f in files]
     number = max(numbers) + 1 if numbers else 1
 
     return join(RAW_PATH, f"dump_{tool}_{arch}_{number}.raw")
 
 
-def _delete_file_if_empty(filepath):
-    """Delete a file if it is empty."""
-
-    info(f"Checking if file is empty")
+def _is_dump_empty(filepath):
+    """Check if the dump file is empty."""
 
     if exists(filepath):
         file_size = stat(filepath).st_size
-        if not file_size:
-            warning(f"Deleting empty file {filepath}")
-            remove(filepath)
-            raise Exception("Empty file")
+        return not file_size
+
+    return False
 
 
-def _delete_corrupted_file(filepath):
-    """Delete a corrupted file if it exists."""
+def _validate_extract_dump_args(tool, arch):
+    """Validate the arguments for the extract_dump function."""
 
-    if exists(filepath):
-        warning(f"Deleting corrupted file")
-        remove(filepath)
+    if not tool or not arch:
+        error_message = "Tool and architecture must be provided."
+        error(error_message)
+        raise ValueError(error_message)
 
+    if not isinstance(tool, str) or not isinstance(arch, str):
+        error_message = "Tool and architecture must be strings."
+        error(error_message)
+        raise ValueError(error_message)
 
-def extract_dump(tool=DUMP_EXTRACTOR_TOOL_DEFAULT, arch=DUMP_EXTRACTOR_ARCH_DEFAULT):
-    """Run the memory dump tool."""
-
-    info(f"Extracting memory dump using {tool.capitalize()} tool")
-
-    arch = "x64"
-    arch_path = BIN_PATH  # temporary
-    # arch_path = X64_PATH if arch == "x64" else X86_PATH
-    tool_path = join(arch_path, f"{tool}_{arch}.exe")
-    output_path = _get_output_path(tool, arch)
-    command = _get_command(tool, tool_path, output_path)
-
-    info(f"Running command: {command}")
-
-    try:
-        process = Popen(
-            command,
-            stdout=PIPE,
-            stderr=PIPE,
-            text=True,
-            encoding="utf-8",
-        )
-        stdout, stderr = process.communicate()
-    except CalledProcessError as e:
-        error(f"A subprocess error occurred: {e}")
-        _delete_corrupted_file(output_path)
-        raise e
-    except Exception as e:
-        error(f"An unexpected error occurred: {e}")
-        _delete_corrupted_file(output_path)
-        raise e
+    if arch == "32bit":
+        formatted_arch = "x86"
+    elif arch == "64bit":
+        formatted_arch = "x64"
     else:
-        if stderr:
-            error(f"An error occurred: {stderr}")
-            raise stderr
+        error_message = f"Architecture not supported: {arch}."
+        error(error_message)
+        raise ValueError(error_message)
 
-        info(f"Output message: {stdout}")
-        info(f"Memory dump file saved at {output_path}")
-        _delete_file_if_empty(output_path)
-
-        process.terminate()
-
-    return output_path
+    return formatted_arch
