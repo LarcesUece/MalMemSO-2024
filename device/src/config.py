@@ -1,4 +1,14 @@
-from utils import load_config, validate_server_data
+from utils import (
+    create_dir,
+    load_config,
+    setup_argparser,
+    setup_logging,
+    validate_server_data,
+    BIN_PATH,
+    LOGS_PATH,
+    RAW_PATH,
+    ZIP_PATH,
+)
 
 config = load_config()
 
@@ -28,3 +38,14 @@ LOGGING_DATA = {
     "filename": _LOGGING_FILENAME,
     "format": _LOGGING_FORMAT,
 }
+
+
+def initialize():
+    create_dir(BIN_PATH)
+    create_dir(LOGS_PATH)
+    create_dir(RAW_PATH)
+    create_dir(ZIP_PATH)
+
+    setup_logging(LOGGING_DATA)
+    args = setup_argparser(PARSER_DATA)
+    return args

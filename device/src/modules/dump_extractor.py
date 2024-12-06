@@ -106,7 +106,7 @@ def _is_dump_empty(filepath):
         file_size = stat(filepath).st_size
         return not file_size
 
-    return False
+    return True
 
 
 def _validate_extract_dump_args(tool, arch):

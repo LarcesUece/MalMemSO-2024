@@ -1,7 +1,7 @@
 import ctypes
 
 from logging import error
-from os import makedirs, getuid, remove
+from os import makedirs, remove
 from os.path import exists
 from platform import system, architecture
 
@@ -43,6 +43,8 @@ def is_root():
         except:
             return False
     elif os_name == "linux":
+        from os import getuid
+
         return getuid() == 0
 
     error_message = f"Unsupported OS: {os_name}"
