@@ -1,8 +1,8 @@
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 from logging import error
 
 
-def setup_argparser(data=None):
+def setup_argparser(data: dict) -> Namespace:
     """Setup the argument parser for the given module."""
 
     _validate_data(data)
@@ -33,7 +33,7 @@ def setup_argparser(data=None):
     return args
 
 
-def _validate_data(data=None):
+def _validate_data(data: dict) -> None:
     """Validate the data dictionary."""
 
     if not data:

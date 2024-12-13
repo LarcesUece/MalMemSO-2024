@@ -5,7 +5,7 @@ from os.path import exists
 from .paths import INI_PATH, INI_EXAMPLE_PATH
 
 
-def load_config(config_file=INI_PATH):
+def load_config(config_file: str = INI_PATH) -> ConfigParser:
     """Load a configuration file and return a ConfigParser object."""
 
     if not exists(config_file):
@@ -24,7 +24,7 @@ def load_config(config_file=INI_PATH):
     return config
 
 
-def validate_server_data(data):
+def validate_server_data(data: dict) -> None:
     if not data:
         error_message = "Server data is missing."
         error(error_message)
@@ -38,5 +38,23 @@ def validate_server_data(data):
 
         if not data[key]:
             error_message = f"Server data key is empty: {key}."
+            error(error_message)
+            raise ValueError(error_message)
+
+
+def validate_endpoint_data(data: dict) -> None:
+    if not data:
+        error_message = "Endpoint data is missing."
+        error(error_message)
+        raise ValueError(error_message)
+
+    for key in ["login", "upload", "response"]:
+        if key not in data:
+            error_message = f"Endpoint data is missing key: {key}"
+            error(error_message)
+            raise ValueError(error_message)
+
+        if not data[key]:
+            error_message = f"Endpoint data key is empty: {key}."
             error(error_message)
             raise ValueError(error_message)

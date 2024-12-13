@@ -6,7 +6,7 @@ from zipfile import ZipFile, ZIP_DEFLATED
 from utils import ZIP_PATH
 
 
-def compress_file(filepath):
+def compress_file(filepath: str) -> str:
     """Compresses a file into a ZIP archive.
 
     Compresses the file at the given path into a ZIP archive and saves

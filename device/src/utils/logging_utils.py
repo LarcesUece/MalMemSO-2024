@@ -16,7 +16,7 @@ from .paths import LOGS_PATH
 from .utils import create_dir
 
 
-def setup_logging(data=None):
+def setup_logging(data: dict) -> None:
     """Setup logging configuration for the caller module."""
 
     _validate_data(data)
@@ -31,7 +31,7 @@ def setup_logging(data=None):
     )
 
 
-def _validate_data(data=None):
+def _validate_data(data: dict) -> None:
     if not data:
         error_message = "No logging data provided."
         error(error_message)
@@ -49,7 +49,7 @@ def _validate_data(data=None):
             raise ValueError(error_message)
 
 
-def _get_level(level):
+def _get_level(level: str) -> int:
     match level:
         case "notset":
             return NOTSET

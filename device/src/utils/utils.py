@@ -6,7 +6,7 @@ from os.path import exists
 from platform import system, architecture
 
 
-def get_os():
+def get_os() -> str:
     """Get the operating system of the current system."""
 
     os_name = system()
@@ -20,7 +20,7 @@ def get_os():
     raise ValueError(error_message)
 
 
-def get_arch():
+def get_arch() -> str:
     """Get the architecture of the current system."""
 
     arch = architecture()[0]
@@ -32,7 +32,7 @@ def get_arch():
     raise ValueError(error_message)
 
 
-def is_root():
+def is_root() -> bool:
     """Check if the current user is root/administrator."""
 
     os_name = get_os()
@@ -52,7 +52,7 @@ def is_root():
     raise ValueError(error_message)
 
 
-def create_dir(path):
+def create_dir(path: str) -> None:
     """Create a directory at the given path."""
 
     if not exists(path):
@@ -64,7 +64,7 @@ def create_dir(path):
             raise PermissionError(error_message)
 
 
-def delete_file(filepath):
+def delete_file(filepath: str) -> None:
     """Delete a file if it exists."""
 
     if exists(filepath):

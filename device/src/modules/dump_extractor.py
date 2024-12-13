@@ -6,7 +6,7 @@ from subprocess import Popen, PIPE, CalledProcessError
 from utils import BIN_PATH, RAW_PATH, create_dir, delete_file
 
 
-def extract_dump(tool, arch):
+def extract_dump(tool: str, arch: str) -> str:
     """Extracts the memory dump file using the specified tool and
     architecture.
 
@@ -73,7 +73,7 @@ def extract_dump(tool, arch):
     return output_path
 
 
-def _validate_extract_dump_args(tool, arch):
+def _validate_extract_dump_args(tool: str, arch: str) -> str:
     """Validates the arguments for the extract_dump function.
 
     Checks if the tool and architecture are provided and valid. The
@@ -120,7 +120,7 @@ def _validate_extract_dump_args(tool, arch):
     return formatted_arch
 
 
-def _get_output_path(tool, arch):
+def _get_output_path(tool: str, arch: str) -> str:
     """Gets the output path for the memory dump file.
 
     Creates the raw output directory if it does not exist, gets the
@@ -159,7 +159,7 @@ def _get_output_path(tool, arch):
     return join(RAW_PATH, f"dump_{tool}_{arch}_{number}.raw")
 
 
-def _get_tool_command(tool, tool_path, output_path):
+def _get_tool_command(tool: str, tool_path: str, output_path: str) -> list:
     """Gets the command to execute the memory dump tool.
 
     Checks if the tool is supported and returns the command to execute
@@ -196,7 +196,7 @@ def _get_tool_command(tool, tool_path, output_path):
     return COMMANDS[tool]
 
 
-def _is_dump_empty(filepath):
+def _is_dump_empty(filepath: str) -> bool:
     """Checks if the dump file is empty.
 
     Checks if the memory dump file exists and has a size greater than
