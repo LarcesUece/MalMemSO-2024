@@ -1,6 +1,6 @@
 python -m venv venv
 source venv/bin/activate
-mkdir -p data/csv data/raw data/symbols data/zip libs
+mkdir -p data/csv data/raw data/report data/zip libs
 touch app.log
 python -m pip install -r requirements.txt
 cd libs

@@ -9,7 +9,7 @@ COPY app.py app.py
 COPY config.py config.py
 COPY requirements.txt requirements.txt
 
-RUN mkdir -p data/csv data/raw data/symbols data/zip libs
+RUN mkdir -p data/csv data/raw data/report data/zip libs
 RUN touch app.log
 
 RUN pip install -r requirements.txt

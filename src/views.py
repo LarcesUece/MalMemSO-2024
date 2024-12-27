@@ -1,69 +1,53 @@
+from datetime import datetime
+from flask import jsonify, request
+from flask.views import MethodView
+from multiprocessing import Process
+from os.path import join
+
 from app import app
-from flask import request, jsonify
-from flask.views import View
-from src import volmemlyzer
-import uuid
-import os
-import threading
+from src import report, zip
 
 
-class CSVView(View):
+class ZIPView(MethodView):
     def __init__(self):
-        self.csv_dir = app.config["CSV_DIR"]
-
-    def dispatch_request(self):
-        return "CSV View"
-
-    def get(self):
-        return "CSV View GET"
-
-
-class RAWView(View):
-    def __init__(self):
-        self.raw_dir = app.config["RAW_DIR"]
-
-    def dispatch_request(self):
-        return "RAW View"
-
-    def get(self):
-        return "RAW View GET"
-
-    def post(self):
-        return "RAW View POST"
-
-
-class ZIPView(View):
-    def __init__(self):
+        self.methods = ["POST"]
         self.zip_dir = app.config["ZIP_DIR"]
-
-    def dispatch_request(self):
-        return "ZIP View"
-
-    def get(self):
-        return "ZIP View GET"
+        self.timestamp_format = app.config["TIMESTAMP_FORMAT"]
 
     def post(self):
         if "file" not in request.files:
-            return jsonify({"error": "No file part"}), 400
+            return jsonify({"error": "No file part."}), 400
 
         file = request.files["file"]
+        received_at = datetime.now().strftime(self.timestamp_format)
 
         if file.filename == "":
-            return jsonify({"error": "No selected file"}), 400
+            return jsonify({"error": "No selected file."}), 400
 
         if not file.filename.endswith(".zip"):
-            return jsonify({"error": "Invalid file extension"}), 400
+            return jsonify({"error": "Invalid file extension."}), 400
 
-        file_id = str(uuid.uuid4())
-        file_path = os.path.join(self.zip_dir, file_id + ".zip")
+        file_id = report.generate_file_id()
+        file_path = join(self.zip_dir, file_id + ".zip")
         file.save(file_path)
 
-        thread = threading.Thread(target=volmemlyzer.run)
-        thread.start()
+        report.update_report(file_id, received_at=received_at, status="saved")
 
-        return jsonify({"id": file_id}), 201
+        process = Process(target=zip.process_zip_file, args=(file_path, file_id))
+        process.start()
+
+        return jsonify({"file_id": file_id}), 201
 
 
-app.add_url_rule("/csv/", view_func=CSVView.as_view("csv"))
-app.add_url_rule("/raw/", view_func=RAWView.as_view("raw"))
+class IDView(MethodView):
+    def __init__(self):
+        self.methods = ["GET"]
+        self.report_file = app.config["REPORT_FILE"]
+
+    def get(self, file_id):
+        data, status_code = report.get_report(file_id)
+        return jsonify(data), status_code
+
+
 app.add_url_rule("/zip/", view_func=ZIPView.as_view("zip"))
+app.add_url_rule("/id/<file_id>/", view_func=IDView.as_view("id"))

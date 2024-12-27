@@ -1,19 +1,32 @@
-import os
+from os.path import dirname, abspath, join
 
 
 class Config:
-    ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-    DATA_DIR = os.path.join(ROOT_DIR, "data")
-    CSV_DIR = os.path.join(DATA_DIR, "csv")
-    RAW_DIR = os.path.join(DATA_DIR, "raw")
-    SYMBOLS_DIR = os.path.join(DATA_DIR, "symbols")
-    ZIP_DIR = os.path.join(DATA_DIR, "zip")
-    LIBS_DIR = os.path.join(ROOT_DIR, "libs")
-    SRC_DIR = os.path.join(ROOT_DIR, "src")
+    ROOT_DIR = dirname(abspath(__file__))
+    DATA_DIR = join(ROOT_DIR, "data")
+    CSV_DIR = join(DATA_DIR, "csv")
+    RAW_DIR = join(DATA_DIR, "raw")
+    PROCESSED_RAW_DIR = join(RAW_DIR, "processed")
+    PROCESSING_RAW_DIR = join(RAW_DIR, "processing")
+    UNPROCESSED_RAW_DIR = join(RAW_DIR, "unprocessed")
+    REPORT_DIR = join(DATA_DIR, "report")
+    ZIP_DIR = join(DATA_DIR, "zip")
+    LIBS_DIR = join(ROOT_DIR, "libs")
+    SRC_DIR = join(ROOT_DIR, "src")
 
-    LOG_FILE = os.path.join(ROOT_DIR, "app.log")
-    VOLMEMLYZER_FILE = os.path.join(LIBS_DIR, "VolMemLyzer-2.0.0", "VolMemLyzer-V2.py")
-    VOLATILITY_FILE = os.path.join(LIBS_DIR, "volatility3-2.8.0", "vol.py")
+    REPORT_FILE = join(REPORT_DIR, "report.csv")
+    LOG_FILE = join(ROOT_DIR, "app.log")
+    VOLMEMLYZER_FILE = join(LIBS_DIR, "VolMemLyzer-2.0.0", "VolMemLyzer-V2.py")
+    VOLATILITY_FILE = join(LIBS_DIR, "volatility3-2.8.0", "vol.py")
+
+    STATUS = {
+        "CREATED": "Created",
+        "PROCESSING": "Processing",
+        "PROCESSED": "Processed",
+        "ERROR": "Error",
+    }
+
+    TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S"
 
     UPDATED_VOL_MODULES = """
         {

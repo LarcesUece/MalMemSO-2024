@@ -1,57 +1,71 @@
 from subprocess import Popen, PIPE
 from re import search, DOTALL
-from logging import info
 from app import app
+from src import report
 
 
-class VolMemLyzer:
-    def __init__(self):
-        self.volmemlyzer_file = app.config["VOLMEMLYZER_FILE"]
-        self.raw_dir = app.config["RAW_DIR"]
-        self.csv_dir = app.config["CSV_DIR"]
-        self.volatility_file = app.config["VOLATILITY_FILE"]
+def edit_vol_modules(target_file, new_dict):
+    print("Iniciando a edição do arquivo do VolMemLyzer.")
+    with open(target_file, "r") as file:
+        content = file.read()
+    print("Arquivo lido.")
 
-    def edit_vol_modules(target_file, new_dict):
-        info("Iniciando a edição do arquivo do VolMemLyzer.")
-        with open(target_file, "r") as file:
-            content = file.read()
-        info("Arquivo lido.")
+    match = search(r"(VOL_MODULES\s*=\s*)({.*?})", content, DOTALL)
 
-        match = search(r"(VOL_MODULES\s*=\s*)({.*?})", content, DOTALL)
+    if match:
+        print("Dicionário encontrado.")
+        old_dict = match.group(2)
+        updated_content = content.replace(old_dict, new_dict.strip())
 
-        if match:
-            info("Dicionário encontrado.")
-            old_dict = match.group(2)
-            updated_content = content.replace(old_dict, new_dict.strip())
+        with open(target_file, "w") as file:
+            file.write(updated_content)
+        print("Arquivo atualizado.")
 
-            with open(target_file, "w") as file:
-                file.write(updated_content)
-            info("Arquivo atualizado.")
+    else:
+        raise ValueError(
+            "Unable to find the VOL_MODULES dictionary in the target file."
+        )
 
-        else:
-            raise ValueError(
-                "Unable to find the VOL_MODULES dictionary in the target file."
-            )
 
-    def run(self):
-        info("Inicando execução do VolMemLyzer.")
-        command = [
-            "python",
-            self.volmemlyzer_file,
-            "-f",
-            self.raw_dir,
-            "-o",
-            self.csv_dir,
-            "-V",
-            self.volatility_file,
-        ]
+def edit_output_file(target_file, new_output):
+    with open(target_file, "r") as file:
+        lines = file.readlines()
 
-        try:
-            process = Popen(command, stdout=PIPE, stderr=PIPE)
-            stdout, stderr = process.communicate()
-        except Exception:
-            raise
+    for i, line in enumerate(lines):
+        if line.strip().startswith(
+            "file_path = os.path.join(CSVoutput_path, 'output.csv')"
+        ):
+            lines[i] = f"    file_path = os.path.join(CSVoutput_path, '{new_output}')\n"
+            break
 
-        info("Análise concluída.")
-        info(stdout.decode())
-        info(stderr.decode())
+    with open(target_file, "w") as file:
+        file.writelines(lines)
+
+
+def run():
+    volmemlyzer_file = app.config["VOLMEMLYZER_FILE"]
+    processing_raw_dir = app.config["PROCESSING_RAW_DIR"]
+    csv_dir = app.config["CSV_DIR"]
+    volatility_file = app.config["VOLATILITY_FILE"]
+
+    print("Inicando execução do VolMemLyzer.")
+    command = [
+        "python",
+        volmemlyzer_file,
+        "-f",
+        processing_raw_dir,
+        "-o",
+        csv_dir,
+        "-V",
+        volatility_file,
+    ]
+
+    try:
+        process = Popen(command, stdout=PIPE, stderr=PIPE)
+        stdout, stderr = process.communicate()
+    except Exception:
+        raise
+
+    print("Análise concluída.")
+    print(stdout.decode())
+    print(stderr.decode())
