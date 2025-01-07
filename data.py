@@ -83,13 +83,13 @@ def process_csv_to_df(data_dir):
 
 def write_initial_data():
     conn = get_connection_to_db()
-    table_name = os.getenv("POSTGRES_TABLE")
+    table_name = os.getenv("DATA_TABLE")
 
     if not is_table_empty(conn, table_name):
         conn.close()
         return
 
-    data_dir = "data"
+    data_dir = "initial_data"
     df = process_csv_to_df(data_dir)
 
     if not df.empty:
@@ -97,6 +97,7 @@ def write_initial_data():
         insert_data_into_table(conn, df, table_name)
 
     # print(fetch_first_five_rows(conn, table_name))
+    # print(get_column_names(conn, table_name))
 
     conn.close()
 
@@ -108,3 +109,39 @@ def write_initial_data():
 #     rows = cursor.fetchall()
 #     cursor.close()
 #     return rows
+
+
+def fetch_data_from_db():
+    table_name = os.getenv("DATA_TABLE")
+    conn = get_connection_to_db()
+    query = f"SELECT * FROM {table_name}"
+    data = pd.read_sql(query, conn)
+    conn.close()
+    return data
+
+
+def get_column_names(conn, table_name):
+    cursor = conn.cursor()
+    query = f"""
+    SELECT column_name 
+    FROM information_schema.columns 
+    WHERE table_name = %s
+    ORDER BY column_name;"""
+    cursor.execute(query, (table_name,))
+    columns = [row[0] for row in cursor.fetchall()]
+    cursor.close()
+    return columns
+
+
+def normalize_column_header(string=None, list=None):
+    if list:
+        new_list = []
+        for item in list:
+            if isinstance(item, str):
+                new_list.append(normalize_column_header(item))
+        return new_list
+
+    if string:
+        return string.replace(".", "_")
+
+    return None
