@@ -1,7 +1,7 @@
 import time
 import dotenv
 
-from data import write_initial_data
+import data
 
 
 def run():
@@ -11,5 +11,5 @@ def run():
 
 if __name__ == "__main__":
     dotenv.load_dotenv()
-    write_initial_data()
+    data.write_initial_data()
     run()

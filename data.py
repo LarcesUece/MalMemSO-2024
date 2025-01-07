@@ -3,7 +3,7 @@ import pandas as pd
 import os
 
 
-def write_initial_data():
+def get_connection_to_db():
     user = os.getenv("POSTGRES_USER")
     password = os.getenv("POSTGRES_PASSWORD")
     host = os.getenv("POSTGRES_HOST")
@@ -13,32 +13,98 @@ def write_initial_data():
     conn = psycopg2.connect(
         dbname=database, user=user, password=password, host=host, port=port
     )
-    cur = conn.cursor()
-    table_name = "malmemso_data"
 
-    cur.execute(f"SELECT COUNT(*) FROM {table_name}")
-    count = cur.fetchone()[0]
-    if count > 0:
-        print("Data already exists in the database.")
-        return
+    return conn
 
-    files = []
-    data_dir = "data"
 
-    for file in os.listdir(data_dir):
-        files.append(pd.read_csv(os.path.join(data_dir, file)))
+def create_table(conn, df, table_name):
+    cursor = conn.cursor()
+    columns = ", ".join([f"{col} TEXT" for col in df.columns])
+    create_table_query = f"""
+    CREATE TABLE IF NOT EXISTS {table_name} (
+        id SERIAL PRIMARY KEY,
+        {columns}
+    );"""
+    cursor.execute(create_table_query)
+    conn.commit()
+    cursor.close()
 
-    combined_df = pd.concat(files, ignore_index=True)
-    columns = combined_df.columns.tolist()
-    insert_query = f"""
-    INSERT INTO {table_name} ({', '.join(columns)})
-    VALUES ({', '.join(['%s'] * len(columns))})"""
 
-    for i, row in combined_df.iterrows():
-        cur.execute(insert_query, tuple(row))
+def insert_data_into_table(conn, df, table_name):
+    cursor = conn.cursor()
+
+    for _, row in df.iterrows():
+        columns = ", ".join(df.columns)
+        values = ", ".join([f"'{str(v).replace('\'', '\'\'')}'" for v in row.values])
+        insert_query = f"INSERT INTO {table_name} ({columns}) VALUES ({values});"
+        cursor.execute(insert_query)
 
     conn.commit()
-    cur.close()
+    cursor.close()
+
+
+def is_table_empty(conn, table_name):
+    cursor = conn.cursor()
+
+    table_exists_query = f"""
+    SELECT EXISTS (
+        SELECT FROM pg_catalog.pg_class c
+        JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+        WHERE c.relname = '{table_name}' AND c.relkind = 'r'
+    );
+    """
+    cursor.execute(table_exists_query)
+    table_exists = cursor.fetchone()[0]
+
+    if not table_exists:
+        cursor.close()
+        return True
+
+    check_empty_query = f"SELECT NOT EXISTS (SELECT 1 FROM {table_name} LIMIT 1);"
+    cursor.execute(check_empty_query)
+    result = cursor.fetchone()[0]
+    cursor.close()
+    return not result
+
+
+def process_csv_to_df(data_dir):
+    combined_data = pd.DataFrame()
+
+    for file_name in os.listdir(data_dir):
+        if file_name.endswith(".csv"):
+            file_path = os.path.join(data_dir, file_name)
+            df = pd.read_csv(file_path)
+            combined_data = pd.concat([combined_data, df], ignore_index=True)
+
+    combined_data.columns = [col.replace(".", "_") for col in combined_data.columns]
+
+    return combined_data
+
+
+def write_initial_data():
+    conn = get_connection_to_db()
+    table_name = os.getenv("POSTGRES_TABLE")
+
+    if not is_table_empty(conn, table_name):
+        conn.close()
+        return
+
+    data_dir = "data"
+    df = process_csv_to_df(data_dir)
+
+    if not df.empty:
+        create_table(conn, df, table_name)
+        insert_data_into_table(conn, df, table_name)
+
+    # print(fetch_first_five_rows(conn, table_name))
+
     conn.close()
 
-    print("Initial data written to database.")
+
+# def fetch_first_five_rows(conn, table_name):
+#     cursor = conn.cursor()
+#     query = f"SELECT * FROM {table_name} LIMIT 5;"
+#     cursor.execute(query)
+#     rows = cursor.fetchall()
+#     cursor.close()
+#     return rows
