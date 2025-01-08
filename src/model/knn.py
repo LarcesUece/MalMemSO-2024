@@ -1,4 +1,4 @@
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
 import joblib
 
 import pandas as pd
@@ -8,8 +8,6 @@ from sklearn.metrics import average_precision_score
 from sklearn.metrics import f1_score
 from sklearn.metrics import recall_score
 from datetime import datetime
-
-from data import normalize_column_header
 
 
 def train(data: pd.DataFrame):
@@ -34,14 +32,13 @@ def train(data: pd.DataFrame):
         "psxview.not_in_session_false_avg",
         "svcscan.interactive_process_services",
     ]
-    columns_to_drop = normalize_column_header(list=columns_to_drop)
+    # columns_to_drop = normalize_column_header(columns_to_drop)
 
     X = X.drop(columns=columns_to_drop, axis=1)
 
     X = X.drop("Category", axis=1)
     class_map = {"Benign": 0, "Malware": 1}
     X["Class"] = X["Class"].map(class_map)
-
     Y = X["Class"]
     X = X.drop("Class", axis=1)
     X = X.sort_index(axis=1)
@@ -50,7 +47,7 @@ def train(data: pd.DataFrame):
         X, Y, test_size=0.3, random_state=1
     )
 
-    model = DecisionTreeClassifier()
+    model = KNeighborsClassifier(n_neighbors=3)
     init_dt = datetime.now()
     model.fit(X_train, y_train)
     end_dt = datetime.now()
@@ -64,6 +61,6 @@ def train(data: pd.DataFrame):
     print(f1_score(y_test, y_pred))
     print(recall_score(y_test, y_pred))
 
-    file_name = "cart_model.pkl"
+    file_name = "knn_model.pkl"
     joblib.dump(model, file_name)
     return model
