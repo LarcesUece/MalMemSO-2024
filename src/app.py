@@ -1,7 +1,9 @@
-from time import sleep
+from src import create_app
 
 import db
 import model
+
+app = create_app()
 
 
 def initialize():
@@ -9,11 +11,6 @@ def initialize():
     model.initialize()
 
 
-def run():
-    while True:
-        sleep(3600)
-
-
 if __name__ == "__main__":
     initialize()
-    run()
+    app.run(host="0.0.0.0", port=5002)

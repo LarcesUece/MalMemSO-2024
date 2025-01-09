@@ -7,15 +7,15 @@ from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
 import config
-import db
+from db import create_table, table_has_data, fetch_data, insert_data
 import utils
 
 
 def initialize() -> None:
     """Initialize the model table and train the models."""
 
-    db.create_table(config.MODEL_TABLE, columns=config.MODEL_COLUMNS)
-    if not db.table_has_data(config.MODEL_TABLE):
+    create_table(config.MODEL_TABLE, columns=config.MODEL_COLUMNS)
+    if not table_has_data(config.MODEL_TABLE):
         train_all()
 
 
@@ -80,7 +80,7 @@ def train(
         raise ValueError
 
     if not data:
-        data = db.fetch_data(config.DATA_TABLE)
+        data = fetch_data(config.DATA_TABLE)
 
     X = data.copy()
 
@@ -108,7 +108,7 @@ def train(
     )
 
     try:
-        db.insert_data(config.MODEL_TABLE, data=training_details)
+        insert_data(config.MODEL_TABLE, data=training_details)
         print(f"Training details for {algorithm} inserted successfully.")
     except Exception:
         print("Error while inserting training details.")

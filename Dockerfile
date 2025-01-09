@@ -12,4 +12,6 @@ COPY . .
 
 EXPOSE 5002
 
-CMD ["python", "src/app.py"]
+WORKDIR /app/src
+
+CMD ["python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5002"]

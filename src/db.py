@@ -78,9 +78,11 @@ def insert_data(
         query = f"INSERT INTO {table_name} ({cols}) VALUES %s"
 
     elif data is not None:
-        cols = data.keys()
-        placeholders = ", ".join([f"%({col})s" for col in cols])
-        query = f"INSERT INTO {table_name} ({', '.join(cols)}) VALUES ({placeholders})"
+        cols = [f'"{col}"' for col in data.keys()]
+        placeholders = ", ".join([f"%({col.strip('\"')})s" for col in data.keys()])
+        query = (
+            f'INSERT INTO "{table_name}" ({", ".join(cols)}) VALUES ({placeholders})'
+        )
 
     try:
         if df is not None:
