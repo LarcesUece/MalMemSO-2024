@@ -1,14 +1,15 @@
-import pandas as pd
-import datetime
-import pytz
-import numpy
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import average_precision_score
-from sklearn.metrics import f1_score
-from sklearn.metrics import recall_score
-import sklearn
-import joblib
-import datetime
+from datetime import datetime
+from joblib import dump
+from numpy import ndarray
+from pandas import DataFrame
+from pandas.api.types import is_integer_dtype, is_float_dtype, is_datetime64_any_dtype
+from pytz import timezone
+from sklearn.metrics import (
+    accuracy_score,
+    average_precision_score,
+    f1_score,
+    recall_score,
+)
 
 import config
 
@@ -16,17 +17,17 @@ import config
 def map_pandas_to_postgres(dtype) -> str:
     """Map pandas data types to PostgreSQL data types."""
 
-    if pd.api.types.is_integer_dtype(dtype):
+    if is_integer_dtype(dtype):
         return "INTEGER"
-    if pd.api.types.is_float_dtype(dtype):
+    if is_float_dtype(dtype):
         return "DOUBLE PRECISION"
-    if pd.api.types.is_datetime64_any_dtype(dtype):
+    if is_datetime64_any_dtype(dtype):
         return "TIMESTAMPTZ"
     return "TEXT"
 
 
 def generate_create_table_query(
-    table_name: str, df: pd.DataFrame = None, columns: list[tuple] = None
+    table_name: str, df: DataFrame = None, columns: list[tuple] = None
 ) -> str:
     """Generate a CREATE TABLE query for PostgreSQL."""
 
@@ -44,27 +45,34 @@ def generate_create_table_query(
     return f"CREATE TABLE {table_name} ({cols});"
 
 
-def get_features_without_correspondence():
+def get_features_without_correspondence() -> list[str]:
+    """Get features that do not have a correspondence in the new version of VolMemLyzer."""
+
     features_old = config.FEATURES_VOLMEMLYZER_V2
     features_new = config.FEATURES_VOLMEMLYZER_V2_2024
 
     return [old for old, new in zip(features_old, features_new) if new is None]
 
 
-def get_timestamp() -> datetime.datetime:
-    return datetime.datetime.now(pytz.timezone(config.PYTZ_TIMEZONE))
+def get_timestamp() -> datetime:
+    """Get the current timestamp with the timezone specified in the configuration."""
+
+    return datetime.now(timezone(config.PYTZ_TIMEZONE))
 
 
 def generate_training_details(
     algorithm: str,
     model,
-    init_dt: datetime.datetime,
-    end_dt: datetime.datetime,
-    y_test: numpy.ndarray,
-    y_pred: numpy.ndarray,
+    init_dt: datetime,
+    end_dt: datetime,
+    y_test: ndarray,
+    y_pred: ndarray,
 ) -> dict:
+    """Generate a dictionary with the training details."""
+
     filename = generate_pickle_filename(algorithm, init_dt)
-    joblib.dump(model, filename=filename)
+    dump(model, filename=filename)
+    print("Model saved.")
 
     return {
         "algorithm": algorithm,
@@ -79,11 +87,15 @@ def generate_training_details(
     }
 
 
-def generate_pickle_filename(algorithm: str, init_dt: datetime.datetime):
+def generate_pickle_filename(algorithm: str, init_dt: datetime):
+    """Generate a filename for the pickle file containing the trained model."""
+
     formatted_dt = init_dt.strftime("%Y%m%d_%H%M%S_%f")
     return f"{algorithm}_{formatted_dt}.pkl"
 
 
 def convert_pickle_to_bytea(file_path: str) -> bytes:
+    """Convert a pickle file to bytea."""
+
     with open(file_path, "rb") as f:
         return f.read()

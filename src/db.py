@@ -1,17 +1,19 @@
-import pandas as pd
-import psycopg2
+from pandas import DataFrame, read_csv, read_sql
+from psycopg2 import connect
+from psycopg2.errors import UndefinedTable
+from psycopg2.extensions import connection
 from psycopg2.extras import execute_values
-import warnings
+from warnings import simplefilter
 
 import config
 import utils
 
 
-def connect() -> psycopg2.extensions.connection:
+def create_connection() -> connection:
     """Connect to the PostgreSQL database server and return the connection object."""
 
     try:
-        conn = psycopg2.connect(
+        conn = connect(
             host=config.DB_HOST,
             port=config.DB_PORT,
             database=config.DB_NAME,
@@ -26,11 +28,11 @@ def connect() -> psycopg2.extensions.connection:
 
 
 def create_table(
-    table_name: str, df: pd.DataFrame = None, columns: list[tuple] = None
+    table_name: str, df: DataFrame = None, columns: list[tuple] = None
 ) -> None:
     """Create a table in the PostgreSQL database."""
 
-    conn = connect()
+    conn = create_connection()
     cur = conn.cursor()
 
     if table_exists(table_name):
@@ -45,8 +47,6 @@ def create_table(
         print("No data or columns provided.")
         raise ValueError
 
-    print(query)
-
     try:
         cur.execute(query)
         conn.commit()
@@ -60,8 +60,8 @@ def create_table(
         conn.close()
 
 
-def insert_data_to_postgres(
-    table_name: str, df: pd.DataFrame = None, data: dict | list[dict] = None
+def insert_data(
+    table_name: str, df: DataFrame = None, data: dict | list[dict] = None
 ) -> None:
     """Insert a pandas DataFrame or a dict into a PostgreSQL table."""
 
@@ -69,7 +69,7 @@ def insert_data_to_postgres(
         print("No data provided.")
         raise ValueError
 
-    conn = connect()
+    conn = create_connection()
     cur = conn.cursor()
 
     if df is not None:
@@ -102,7 +102,7 @@ def insert_data_to_postgres(
 def table_exists(table_name: str) -> bool:
     """Check if a table exists in the PostgreSQL database."""
 
-    conn = connect()
+    conn = create_connection()
     cur = conn.cursor()
 
     query = """
@@ -116,6 +116,11 @@ def table_exists(table_name: str) -> bool:
     try:
         cur.execute(query, (table_name,))
         exists = cur.fetchone()[0]
+        (
+            print(f"Table '{table_name}' exists.")
+            if exists
+            else print(f"Table '{table_name}' does not exist.")
+        )
         return exists
     except Exception:
         print("Error checking if table exists.")
@@ -128,7 +133,7 @@ def table_exists(table_name: str) -> bool:
 def table_has_data(table_name: str) -> bool:
     """Check if a table has data in the PostgreSQL database."""
 
-    conn = connect()
+    conn = create_connection()
     cur = conn.cursor()
 
     query = f"SELECT COUNT(*) FROM {table_name};"
@@ -136,8 +141,10 @@ def table_has_data(table_name: str) -> bool:
     try:
         cur.execute(query)
         count = cur.fetchone()[0]
+        print("Table has data.") if count > 0 else print("Table has no data.")
         return count > 0
-    except psycopg2.errors.UndefinedTable:
+    except UndefinedTable:
+        print(f"Table '{table_name}' does not exist.")
         return False
     except Exception:
         print(f"Error checking if table '{table_name}' has data.")
@@ -147,24 +154,26 @@ def table_has_data(table_name: str) -> bool:
         conn.close()
 
 
-def insert_initial_data():
+def insert_initial_data() -> None:
     """Insert initial data into the database if the table is empty or does not exist."""
 
     if not table_exists(config.DATA_TABLE):
-        df = pd.read_csv(config.INITIAL_DATA_FILE)
+        df = read_csv(config.INITIAL_DATA_FILE)
         create_table(config.DATA_TABLE, df)
-        insert_data_to_postgres(config.DATA_TABLE, df=df)
+        insert_data(config.DATA_TABLE, df=df)
         print("Initial data inserted.")
     elif not table_has_data(config.DATA_TABLE):
-        df = pd.read_csv(config.INITIAL_DATA_FILE)
-        insert_data_to_postgres(config.DATA_TABLE, df=df)
+        df = read_csv(config.INITIAL_DATA_FILE)
+        insert_data(config.DATA_TABLE, df=df)
         print("Initial data inserted.")
+    else:
+        print("Table already has data.")
 
 
-def delete_data_from_table(table_name: str) -> None:
+def delete_data(table_name: str) -> None:
     """Delete all data from a table in the PostgreSQL database."""
 
-    conn = connect()
+    conn = create_connection()
     cur = conn.cursor()
 
     query = f"DELETE FROM {table_name};"
@@ -182,17 +191,18 @@ def delete_data_from_table(table_name: str) -> None:
         conn.close()
 
 
-def fetch_data(table_name: str, n_lines: int = 0) -> pd.DataFrame:
+def fetch_data(table_name: str, n_lines: int = 0) -> DataFrame:
     """Fetch data from a table in the PostgreSQL database."""
 
-    conn = connect()
+    conn = create_connection()
     query = f"SELECT * FROM {table_name}"
 
     query += f" LIMIT {n_lines};" if n_lines > 0 else ";"
 
     try:
-        warnings.simplefilter(action="ignore", category=UserWarning)
-        df = pd.read_sql(query, conn)
+        simplefilter(action="ignore", category=UserWarning)
+        df = read_sql(query, conn)
+        print(f"Data fetched from '{table_name}' successfully.")
         return df
     except Exception:
         print(f"Error fetching data from '{table_name}'.")
@@ -204,7 +214,7 @@ def fetch_data(table_name: str, n_lines: int = 0) -> pd.DataFrame:
 def delete_table(table_name: str) -> None:
     """Delete a table from the PostgreSQL database."""
 
-    conn = connect()
+    conn = create_connection()
     cur = conn.cursor()
 
     query = f"DROP TABLE {table_name};"

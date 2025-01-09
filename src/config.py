@@ -1,26 +1,27 @@
-import os
-import dotenv
+from dotenv import load_dotenv
+from os.path import join, dirname, abspath
+from os import getenv, pardir
 
 # Directories
-SRC_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR = os.path.join(SRC_DIR, os.pardir)
-DATA_DIR = os.path.join(ROOT_DIR, "data")
+SRC_DIR = dirname(abspath(__file__))
+ROOT_DIR = join(SRC_DIR, pardir)
+DATA_DIR = join(ROOT_DIR, "data")
 
 # Files
-INITIAL_DATA_FILE = os.path.join(DATA_DIR, "Obfuscated-MalMem2022.csv")
-ENV_FILE = os.path.join(ROOT_DIR, ".env")
+INITIAL_DATA_FILE = join(DATA_DIR, "Obfuscated-MalMem2022.csv")
+ENV_FILE = join(ROOT_DIR, ".env")
 
 # Tables
 DATA_TABLE = "data"
 MODEL_TABLE = "model"
 
 # Database
-dotenv.load_dotenv(ENV_FILE)
-DB_USER = os.getenv("POSTGRES_USER")
-DB_PASS = os.getenv("POSTGRES_PASSWORD")
-DB_HOST = os.getenv("POSTGRES_HOST")
-DB_PORT = os.getenv("PORTGRES_PORT")
-DB_NAME = os.getenv("POSTGRES_DB")
+load_dotenv(ENV_FILE)
+DB_USER = getenv("POSTGRES_USER")
+DB_PASS = getenv("POSTGRES_PASSWORD")
+DB_HOST = getenv("POSTGRES_HOST")
+DB_PORT = getenv("PORTGRES_PORT")
+DB_NAME = getenv("POSTGRES_DB")
 
 MODEL_COLUMNS = [
     ("algorithm", "TEXT"),
@@ -153,3 +154,6 @@ FEATURES_VOLMEMLYZER_V2_2024 = [
 
 # Timestamps
 PYTZ_TIMEZONE = "UTC"
+
+# Training algorithms
+ALGORITHMS = ["cart", "knn", "mlp", "rf", "svm"]
