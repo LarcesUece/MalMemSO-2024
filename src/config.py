@@ -2,20 +2,20 @@ from dotenv import load_dotenv
 from os.path import join, dirname, abspath
 from os import getenv, pardir
 
-# Directories
+# Directories paths
 SRC_DIR = dirname(abspath(__file__))
 ROOT_DIR = join(SRC_DIR, pardir)
 DATA_DIR = join(ROOT_DIR, "data")
 
-# Files
+# Files paths
 INITIAL_DATA_FILE = join(DATA_DIR, "Obfuscated-MalMem2022.csv")
 ENV_FILE = join(ROOT_DIR, ".env")
 
-# Tables
+# Tables names
 DATA_TABLE = "data"
 MODEL_TABLE = "model"
 
-# Database
+# Database variables
 load_dotenv(ENV_FILE)
 DB_USER = getenv("POSTGRES_USER")
 DB_PASS = getenv("POSTGRES_PASSWORD")
@@ -23,19 +23,7 @@ DB_HOST = getenv("POSTGRES_HOST")
 DB_PORT = getenv("PORTGRES_PORT")
 DB_NAME = getenv("POSTGRES_DB")
 
-MODEL_COLUMNS = [
-    ("algorithm", "TEXT"),
-    ("model_pickle", "BYTEA"),
-    ("accuracy", "DOUBLE PRECISION"),
-    ("precision", "DOUBLE PRECISION"),
-    ("recall", "DOUBLE PRECISION"),
-    ("f1", "DOUBLE PRECISION"),
-    ("init_time", "TIMESTAMPTZ"),
-    ("end_time", "TIMESTAMPTZ"),
-    ("training_duration", "INTERVAL"),
-]
-
-# VolMemLyzer
+# VolMemLyzer features
 FEATURES_VOLMEMLYZER_V2 = [
     "callbacks.nanonymous",
     "callbacks.ncallbacks",
@@ -152,8 +140,27 @@ FEATURES_VOLMEMLYZER_V2_2024 = [
     "svcscan.Type_Share",
 ]
 
-# Timestamps
+# Table columns names and optional types
+DATA_COLUMNS_NAMES = ["Category", "Class"] + [
+    old
+    for old, new in zip(FEATURES_VOLMEMLYZER_V2, FEATURES_VOLMEMLYZER_V2_2024)
+    if new is None
+]
+
+MODEL_COLUMNS_NAMES_TYPES = [
+    ("algorithm", "TEXT"),
+    ("model_pickle", "BYTEA"),
+    ("accuracy", "DOUBLE PRECISION"),
+    ("precision", "DOUBLE PRECISION"),
+    ("recall", "DOUBLE PRECISION"),
+    ("f1", "DOUBLE PRECISION"),
+    ("init_time", "TIMESTAMPTZ"),
+    ("end_time", "TIMESTAMPTZ"),
+    ("training_duration", "INTERVAL"),
+]
+
+# Timestamps timezone
 PYTZ_TIMEZONE = "UTC"
 
-# Training algorithms
+# Training algorithms available
 ALGORITHMS = ["cart", "knn", "mlp", "rf", "svm"]

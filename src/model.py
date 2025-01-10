@@ -6,16 +6,20 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
-import config
+from config import MODEL_TABLE, MODEL_COLUMNS_NAMES_TYPES, ALGORITHMS, DATA_TABLE
 from db import create_table, table_has_data, fetch_data, insert_data
-import utils
+from utils import (
+    get_features_without_correspondence,
+    get_timestamp,
+    generate_training_details,
+)
 
 
 def initialize() -> None:
-    """Initialize the model table and train the models."""
+    """Initialize the model table and train the models if necessary."""
 
-    create_table(config.MODEL_TABLE, columns=config.MODEL_COLUMNS)
-    if not table_has_data(config.MODEL_TABLE):
+    create_table(MODEL_TABLE, columns=MODEL_COLUMNS_NAMES_TYPES)
+    if not table_has_data(MODEL_TABLE):
         train_all()
 
 
@@ -48,7 +52,7 @@ def create_model(
 def train_all(data: DataFrame = None) -> None:
     """Train model for every algorithm available."""
 
-    for algorithm in config.ALGORITHMS:
+    for algorithm in ALGORITHMS:
         model = create_model(algorithm)
         train(model, data)
 
@@ -63,7 +67,7 @@ def train(
     ),
     data: DataFrame = None,
 ):
-    """Train the model and insert the training details into the model table."""
+    """Normalize the data, split it into training and testing sets, train the model and insert the training details into the model table."""
 
     if isinstance(model, DecisionTreeClassifier):
         algorithm = "cart"
@@ -80,15 +84,17 @@ def train(
         raise ValueError
 
     if not data:
-        data = fetch_data(config.DATA_TABLE)
+        data = fetch_data(DATA_TABLE)
 
     X = data.copy()
 
-    columns_to_drop = utils.get_features_without_correspondence()
+    columns_to_drop = get_features_without_correspondence()
     X = X.drop(columns=columns_to_drop, axis=1)
     X = X.drop("Category", axis=1)
     class_map = {"Benign": 0, "Malware": 1}
     X["Class"] = X["Class"].map(class_map)
+    X = X.dropna()
+
     Y = X["Class"]
     X = X.drop("Class", axis=1)
     X = X.sort_index(axis=1)
@@ -97,18 +103,18 @@ def train(
         X, Y, test_size=0.3, random_state=1
     )
 
-    init_dt = utils.get_timestamp()
+    init_dt = get_timestamp()
     model.fit(X_train, y_train)
-    end_dt = utils.get_timestamp()
+    end_dt = get_timestamp()
     y_pred = model.predict(X_test)
     print(f"Model trained for {algorithm}.")
 
-    training_details = utils.generate_training_details(
+    training_details = generate_training_details(
         algorithm, model, init_dt, end_dt, y_test, y_pred
     )
 
     try:
-        insert_data(config.MODEL_TABLE, data=training_details)
+        insert_data(MODEL_TABLE, data=training_details)
         print(f"Training details for {algorithm} inserted successfully.")
     except Exception:
         print("Error while inserting training details.")

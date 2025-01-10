@@ -11,7 +11,9 @@ from sklearn.metrics import (
     recall_score,
 )
 
-import config
+from config import FEATURES_VOLMEMLYZER_V2, FEATURES_VOLMEMLYZER_V2_2024, PYTZ_TIMEZONE
+from db import insert_initial_data
+from model import initialize as init_model
 
 
 def map_pandas_to_postgres(dtype) -> str:
@@ -31,13 +33,14 @@ def generate_create_table_query(
 ) -> str:
     """Generate a CREATE TABLE query for PostgreSQL."""
 
+    cols = '"id" SERIAL PRIMARY KEY'
+
     if df is not None:
-        cols = []
         for col, dtype in df.dtypes.items():
-            cols.append(f'"{col}" {map_pandas_to_postgres(dtype)}')
-        cols = ", ".join(cols)
+            if col != "id":
+                cols += f', "{col}" {map_pandas_to_postgres(dtype)}'
     elif columns is not None:
-        cols = ", ".join([f'"{col}" {dtype}' for col, dtype in columns])
+        cols += ", ".join([f'"{col}" {dtype}' for col, dtype in columns if col != "id"])
     else:
         print("No data or columns provided.")
         raise ValueError
@@ -48,8 +51,8 @@ def generate_create_table_query(
 def get_features_without_correspondence() -> list[str]:
     """Get features that do not have a correspondence in the new version of VolMemLyzer."""
 
-    features_old = config.FEATURES_VOLMEMLYZER_V2
-    features_new = config.FEATURES_VOLMEMLYZER_V2_2024
+    features_old = FEATURES_VOLMEMLYZER_V2
+    features_new = FEATURES_VOLMEMLYZER_V2_2024
 
     return [old for old, new in zip(features_old, features_new) if new is None]
 
@@ -57,7 +60,7 @@ def get_features_without_correspondence() -> list[str]:
 def get_timestamp() -> datetime:
     """Get the current timestamp with the timezone specified in the configuration."""
 
-    return datetime.now(timezone(config.PYTZ_TIMEZONE))
+    return datetime.now(timezone(PYTZ_TIMEZONE))
 
 
 def generate_training_details(
@@ -71,20 +74,31 @@ def generate_training_details(
     """Generate a dictionary with the training details."""
 
     filename = generate_pickle_filename(algorithm, init_dt)
-    dump(model, filename=filename)
-    print("Model saved.")
+    try:
+        dump(model, filename=filename)
+        print("Model saved.")
+    except Exception:
+        print("Error while saving the model to a pickle file.")
+        raise
 
-    return {
-        "algorithm": algorithm,
-        "model_pickle": convert_pickle_to_bytea(filename),
-        "accuracy": float(accuracy_score(y_test, y_pred)),
-        "precision": float(average_precision_score(y_test, y_pred)),
-        "recall": float(recall_score(y_test, y_pred)),
-        "f1": float(f1_score(y_test, y_pred)),
-        "init_time": init_dt,
-        "end_time": end_dt,
-        "training_duration": end_dt - init_dt,
-    }
+    try:
+        training_details = {
+            "algorithm": algorithm,
+            "model_pickle": convert_pickle_to_bytea(filename),
+            "accuracy": float(accuracy_score(y_test, y_pred)),
+            "precision": float(average_precision_score(y_test, y_pred)),
+            "recall": float(recall_score(y_test, y_pred)),
+            "f1": float(f1_score(y_test, y_pred)),
+            "init_time": init_dt,
+            "end_time": end_dt,
+            "training_duration": end_dt - init_dt,
+        }
+        print("Training details generated.")
+    except Exception:
+        print("Error while generating the training details.")
+        raise
+
+    return training_details
 
 
 def generate_pickle_filename(algorithm: str, init_dt: datetime):
@@ -97,5 +111,5 @@ def generate_pickle_filename(algorithm: str, init_dt: datetime):
 def convert_pickle_to_bytea(file_path: str) -> bytes:
     """Convert a pickle file to bytea."""
 
-    with open(file_path, "rb") as f:
-        return f.read()
+    with open(file_path, "rb") as file:
+        return file.read()

@@ -1,16 +1,7 @@
-from src import create_app
-
-import db
-import model
+from src import create_app, initialize
 
 app = create_app()
-
-
-def initialize():
-    db.insert_initial_data()
-    model.initialize()
-
+initialize()
 
 if __name__ == "__main__":
-    initialize()
     app.run(host="0.0.0.0", port=5002)

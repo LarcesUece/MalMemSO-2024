@@ -2,8 +2,8 @@ from flask import current_app as app
 from flask import jsonify, request
 from threading import Thread
 
-from config import DATA_TABLE, FEATURES_VOLMEMLYZER_V2
-from db import insert_data
+from config import DATA_TABLE, DATA_COLUMNS_NAMES
+from db import insert_data, fetch_data, delete_table
 from model import train_all
 
 
@@ -19,6 +19,8 @@ def index():
 
 @app.post("/data")
 def receive_data():
+    """Receive data, validate, insert it into the data table and start a thread to train the models."""
+
     try:
         request_data = request.get_json()
         if not request_data:
@@ -27,12 +29,12 @@ def receive_data():
         validated_data = {}
 
         for feature in request_data:
-            if feature in FEATURES_VOLMEMLYZER_V2:
+            if feature in DATA_COLUMNS_NAMES:
                 validated_data[feature] = request_data[feature]
 
         missing_features = []
 
-        for feature in FEATURES_VOLMEMLYZER_V2:
+        for feature in DATA_COLUMNS_NAMES:
             if not feature in validated_data:
                 missing_features.append(feature)
 
@@ -51,6 +53,25 @@ def receive_data():
         thread = Thread(target=train_all)
         thread.start()
 
-        return jsonify({"message": "Data received."}), 201
+        return jsonify({"message": "Data received and inserted successfully."}), 201
     except Exception as err:
         return jsonify({"error": str(err)}), 500
+
+
+# Debug function
+# @app.get("/data")
+# def get_last_data():
+#     try:
+#         data = fetch_data(DATA_TABLE, 5, True)
+#         return jsonify(data.to_dict(orient="records"))
+#     except Exception as err:
+#         return jsonify({"error": str(err)}), 500
+
+# Debug function
+# @app.get("/delete/data")
+# def delete_table_data():
+#     try:
+#         delete_table(DATA_TABLE)
+#         return jsonify({"message": "Data deleted."})
+#     except Exception as err:
+#         return jsonify({"error": str(err)}), 500
