@@ -12,8 +12,6 @@ from sklearn.metrics import (
 )
 
 from config import FEATURES_VOLMEMLYZER_V2, FEATURES_VOLMEMLYZER_V2_2024, PYTZ_TIMEZONE
-from db import insert_initial_data
-from model import initialize as init_model
 
 
 def map_pandas_to_postgres(dtype) -> str:

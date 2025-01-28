@@ -5,10 +5,15 @@ from os import getenv, pardir
 # Directories paths
 SRC_DIR = dirname(abspath(__file__))
 ROOT_DIR = join(SRC_DIR, pardir)
-DATA_DIR = join(ROOT_DIR, "data")
+DATA_DIR = join(ROOT_DIR, "csv")
 
 # Files paths
-INITIAL_DATA_FILE = join(DATA_DIR, "Obfuscated-MalMem2022.csv")
+INITIAL_DATA_FILES = [
+    join(DATA_DIR, "Obfuscated-MalMem2022.csv"),
+    join(DATA_DIR, "Output1.csv"),
+    join(DATA_DIR, "output2.csv"),
+    join(DATA_DIR, "output3.csv"),
+]
 ENV_FILE = join(ROOT_DIR, ".env")
 
 # Tables names
@@ -140,8 +145,10 @@ FEATURES_VOLMEMLYZER_V2_2024 = [
     "svcscan.Type_Share",
 ]
 
+COLUMN_FILENAME_NAME = "mem.name_extn"
+
 # Table columns names and optional types
-DATA_COLUMNS_NAMES = ["Category", "Class"] + [
+DATA_COLUMNS_NAMES = ["Class", COLUMN_FILENAME_NAME] + [
     old
     for old, new in zip(FEATURES_VOLMEMLYZER_V2, FEATURES_VOLMEMLYZER_V2_2024)
     if new is None

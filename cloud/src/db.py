@@ -1,4 +1,4 @@
-from pandas import DataFrame, read_csv, read_sql
+from pandas import DataFrame, read_sql, read_csv, concat
 from psycopg2 import connect
 from psycopg2.errors import UndefinedTable
 from psycopg2.extensions import connection
@@ -12,9 +12,11 @@ from config import (
     DB_USER,
     DB_PASS,
     DATA_TABLE,
-    INITIAL_DATA_FILE,
+    INITIAL_DATA_FILES,
 )
 from utils import generate_create_table_query
+
+from dataset import load_data, clean_data
 
 
 def create_connection() -> connection:
@@ -194,7 +196,14 @@ def insert_initial_data() -> None:
     """Insert initial data into the database if the table is empty or does not exist."""
 
     if not table_exists(DATA_TABLE) or not table_has_data(DATA_TABLE):
-        df = read_csv(INITIAL_DATA_FILE)
+        clean_df = DataFrame()
+
+        for file in INITIAL_DATA_FILES:
+            df = read_csv(file)
+            df = clean_data(df)
+            clean_df = concat([clean_df, df])
+
+        df = load_data(INITIAL_DATA_FILES)
 
         if not table_exists(DATA_TABLE):
             create_table(DATA_TABLE)

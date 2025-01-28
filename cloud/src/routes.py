@@ -59,19 +59,20 @@ def receive_data():
 
 
 # Debug function
-# @app.get("/data")
-# def get_last_data():
-#     try:
-#         data = fetch_data(DATA_TABLE, 5, True)
-#         return jsonify(data.to_dict(orient="records"))
-#     except Exception as err:
-#         return jsonify({"error": str(err)}), 500
+@app.get("/data")
+def get_last_data():
+    try:
+        data = fetch_data(DATA_TABLE, 5, True)
+        return jsonify(data.to_dict(orient="records"))
+    except Exception as err:
+        return jsonify({"error": str(err)}), 500
+
 
 # Debug function
-# @app.get("/delete/data")
-# def delete_table_data():
-#     try:
-#         delete_table(DATA_TABLE)
-#         return jsonify({"message": "Data deleted."})
-#     except Exception as err:
-#         return jsonify({"error": str(err)}), 500
+@app.get("/delete/data")
+def delete_table_data():
+    try:
+        delete_table(DATA_TABLE)
+        return jsonify({"message": "Data deleted."})
+    except Exception as err:
+        return jsonify({"error": str(err)}), 500
