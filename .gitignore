@@ -1,2 +1,5 @@
-.env
+libs
+data
+__pycache__
 venv
+*.log
