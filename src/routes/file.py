@@ -42,7 +42,8 @@ def post_file(name: str):
 
 @app.get("/file/<int:id>")
 def get_file(id: int):
-    return f"Get file {id}."
+    content = f"Get file {id}."
+    return render_template("default.html", content=content)
 
 
 @app.patch("/file/<int:id>")

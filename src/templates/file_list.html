@@ -1,77 +1,22 @@
-{% extends 'base.html' %}
+{% extends 'table_base.html' %}
 
-{% block header %}
-    {% block title %}
-        Files
-    {% endblock %}
-{% endblock %}
+{% set title = "Files" %}
+{% set route = 'list_files' %}
+{% set columns = {
+    'id': 'ID',
+    'name': 'Name',
+    'status': 'Status',
+    'platform': 'Platform',
+    'received_at': 'Received at',
+    'processing_started_at': 'Processing started at',
+    'processing_finished_at': 'Processing finished at',
+    'malware_detected': 'Malware detected',
+    'created_at': 'Created at'
+} %}
+{% set data = files %}
+{% set sort_by = sort_by %}
+{% set order = order %}
 
 {% block content %}
-    <table>
-        <thead>
-            <tr>
-                {% set new_order = "asc" if order == "desc" else "desc" %}
-                <th>
-                    <a href="{{ url_for('list_files', sort_by='id', order=new_order) }}" class="{{ 'underline' if sort_by == 'id' else '' }}">
-                        id
-                    </a>
-                </th>
-                <th>
-                    <a href="{{ url_for('list_files', sort_by='name', order=new_order) }}" class="{{ 'underline' if sort_by == 'name' else '' }}">
-                        name
-                    </a>
-                </th>
-                <th>
-                    <a href="{{ url_for('list_files', sort_by='status', order=new_order) }}" class="{{ 'underline' if sort_by == 'status' else '' }}">
-                        status
-                    </a>
-                </th>
-                <th>
-                    <a href="{{ url_for('list_files', sort_by='platform', order=new_order) }}" class="{{ 'underline' if sort_by == 'platform' else '' }}">
-                        platform
-                    </a>
-                </th>
-                <th>
-                    <a href="{{ url_for('list_files', sort_by='received_at', order=new_order) }}" class="{{ 'underline' if sort_by == 'received_at' else '' }}">
-                        received_at
-                    </a>
-                </th>
-                <th>
-                    <a href="{{ url_for('list_files', sort_by='processing_started_at', order=new_order) }}" class="{{ 'underline' if sort_by == 'processing_started_at' else '' }}">
-                        processing_started_at
-                    </a>
-                </th>
-                <th>
-                    <a href="{{ url_for('list_files', sort_by='processing_finished_at', order=new_order) }}" class="{{ 'underline' if sort_by == 'processing_finished_at' else '' }}">
-                        processing_finished_at
-                    </a>
-                </th>
-                <th>
-                    <a href="{{ url_for('list_files', sort_by='malware_detected', order=new_order) }}" class="{{ 'underline' if sort_by == 'malware_detected' else '' }}">
-                        malware_detected
-                    </a>
-                </th>
-                <th>
-                    <a href="{{ url_for('list_files', sort_by='created_at', order=new_order) }}" class="{{ 'underline' if sort_by == 'created_at' else '' }}">
-                        created_at
-                    </a>
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for file in files %}
-                <tr>
-                    <td>{{ file.id }}</td>
-                    <td>{{ file.name }}</td>
-                    <td>{{ file.status }}</td>
-                    <td>{{ file.platform }}</td>
-                    <td>{{ file.received_at|apply_tz }}</td>
-                    <td>{{ file.processing_started_at|apply_tz }}</td>
-                    <td>{{ file.processing_finished_at|apply_tz }}</td>
-                    <td>{{ file.malware_detected }}</td>
-                    <td>{{ file.created_at|apply_tz }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    {{ super() }}
 {% endblock %}

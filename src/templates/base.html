@@ -5,9 +5,11 @@
         <link rel="stylesheet" href="../static/style.css">
     </head>
     <body>
-        <h1>
-            {% block header %}{% endblock %}
-        </h1>
+        {% if title %}
+            <h1>
+                {% block header %}{{title}}{% endblock %}
+            </h1>
+        {% endif %}
         <main>
             {% block content %}{% endblock %}
         </main>

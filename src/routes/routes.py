@@ -1,21 +1,22 @@
-from flask import current_app as app
+from flask import current_app as app, render_template, jsonify
 
 
 @app.route("/")
 def root():
-    return "MalMemSO service is running."
+    content = "MalMemSO service is running."
+    return render_template("default.html", content=content)
 
 
 @app.errorhandler(404)
-def page_not_found(e):
-    return "Not found.", 404
+def page_not_found(error):
+    return jsonify({"error": error.name}), 404
 
 
 @app.errorhandler(405)
-def method_not_allowed(e):
-    return "Not allowed.", 405
+def method_not_allowed(error):
+    return jsonify({"error": error.name}), 405
 
 
 @app.errorhandler(500)
-def internal_server_error(e):
-    return "Internal server error. Try again.", 500
+def internal_server_error(error):
+    return jsonify({"error": error.name}), 500
