@@ -1,0 +1,37 @@
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11pt;
+    background-color: #f0f0f0;
+    padding: 1rem;
+}
+
+h1 {
+    margin-bottom: 1rem;
+}
+
+table {
+    border-collapse: collapse;
+    border: 1px solid black;
+}
+
+table a {
+    text-decoration: none;
+    color: black;
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 0.5rem 1rem;
+    text-align: center;
+}
+
+.underline {
+    text-decoration: underline;
+}
