@@ -7,12 +7,13 @@ class File(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(255), nullable=False)
     status = db.Column(
-        db.Enum("processing", "processed", "failed", "waiting"),
+        "file_status",
+        db.Enum("processing", "processed", "failed", "waiting", name="file_status"),
         nullable=False,
         default="waiting",
     )
-    platform = db.Column(db.String(255), nullable=False)
-    received_at = db.Column(db.DateTime, nullable=False)
+    platform = db.Column(db.String(255), nullable=True)
+    received_at = db.Column(db.DateTime, nullable=True)
     processing_started_at = db.Column(db.DateTime, nullable=True)
     processing_finished_at = db.Column(db.DateTime, nullable=True)
     malware_detected = db.Column(db.Boolean, nullable=True)
@@ -23,7 +24,11 @@ class Model(db.Model):
     __tablename__ = "models"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    algorithm = db.Column(db.Enum("cart", "knn", "mlp", "rf", "svm"), nullable=False)
+    algorithm = db.Column(
+        "model_algorithm",
+        db.Enum("cart", "knn", "mlp", "rf", "svm", name="model_algorithm"),
+        nullable=False,
+    )
     pickle = db.Column(db.PickleType, nullable=False)
     train_accuracy = db.Column(db.Float, nullable=False)
     train_precision = db.Column(db.Float, nullable=False)
@@ -98,6 +103,9 @@ class Analysis(db.Model):
     callbacks_nanonymous = db.Column(db.Integer, nullable=False)
     callbacks_ngeneric = db.Column(db.Integer, nullable=False)
     file_class = db.Column(
-        db.Enum("malware", "benign", "undefined"), nullable=False, default="undefined"
+        "analysis_file_class",
+        db.Enum("malware", "benign", "undefined", name="analysis_file_class"),
+        nullable=False,
+        default="undefined",
     )
     created_at = db.Column(db.DateTime, server_default=db.func.now(), nullable=False)
