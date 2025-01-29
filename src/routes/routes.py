@@ -8,12 +8,12 @@ def root():
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return "Page not found.", 404
+    return "Not found.", 404
 
 
 @app.errorhandler(405)
 def method_not_allowed(e):
-    return "Method not allowed.", 405
+    return "Not allowed.", 405
 
 
 @app.errorhandler(500)
