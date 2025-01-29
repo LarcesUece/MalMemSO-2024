@@ -1,0 +1,30 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: malmemso_service_web
+    depends_on:
+      - db
+    env_file:
+      - .env
+    ports:
+      - "5005:5000"
+    restart: always
+    volumes:
+      - .:/app
+
+  db:
+    container_name: malmemso_service_db
+    env_file:
+      - .env
+    image: postgres:17
+    ports:
+      - "5445:5432"
+    restart: always
+    volumes:
+      - data:/var/lib/postgresql/data
+
+volumes:
+  data:
+    name: malmemso_service_data
