@@ -1,4 +1,4 @@
-from flask import current_app as app, render_template, request
+from flask import current_app as app, render_template, request, jsonify
 from ..db import db
 from ..db.models import File
 
@@ -29,7 +29,19 @@ def list_files():
 
     files = File.query.order_by(column).all()
 
+    if not files:
+        return jsonify({"message": "No files found."})
+
     return render_template("file_list.html", files=files, sort_by=sort_by, order=order)
+
+
+# @app.post("/file/")
+# def post_file():
+#     data = request.json
+#     file = File(**data)
+#     db.session.add(file)
+#     db.session.commit()
+#     return jsonify(file.as_dict())
 
 
 @app.get("/file/<string:name>")
@@ -37,20 +49,28 @@ def post_file(name: str):
     file = File(name=name)
     db.session.add(file)
     db.session.commit()
-    return "Post file."
+    return jsonify(file.as_dict())
 
 
 @app.get("/file/<int:id>")
 def get_file(id: int):
-    content = f"Get file {id}."
-    return render_template("default.html", content=content)
+    file = File.query.get_or_404(id)
+    return jsonify(file.as_dict())
 
 
 @app.patch("/file/<int:id>")
 def patch_file(id: int):
-    return f"Patch file {id}."
+    file = File.query.get_or_404(id)
+    data = request.json
+    for key, value in data.items():
+        setattr(file, key, value)
+    db.session.commit()
+    return jsonify(file.as_dict())
 
 
 @app.delete("/file/<int:id>")
 def delete_file(id: int):
-    return f"Delete file {id}."
+    file = File.query.get_or_404(id)
+    db.session.delete(file)
+    db.session.commit()
+    return jsonify({"message": "File deleted."})
