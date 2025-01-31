@@ -6,7 +6,7 @@ from .tables import is_table_empty
 
 
 def insert_initial_data() -> None:
-    dir = app.config["INITIAL_DATA_DIR"]
+    dir = app.config["DIR_INITIAL_DATA"]
     table_name = app.config["TABLE_ANALYSIS"]
 
     if not os.path.exists(dir):
