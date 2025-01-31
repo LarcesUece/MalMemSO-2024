@@ -74,62 +74,45 @@ class Analysis(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     initial_data = db.Column(db.Boolean, nullable=False, default=False)
     file_id = db.Column(db.Integer, db.ForeignKey("files.id"), nullable=True)
-    mem_name_extn = db.Column(db.String(255), nullable=False)
-    pslist_nproc = db.Column(db.Integer, nullable=False)
-    pslist_nppid = db.Column(db.Integer, nullable=False)
-    pslist_avg_threads = db.Column(db.Float, nullable=False)
-    pslist_nprocs64bit = db.Column(db.Integer, nullable=False)
-    pslist_avg_handlers = db.Column(db.Float, nullable=False)
-    dlllist_ndlls = db.Column(db.Integer, nullable=False)
-    dlllist_avg_dlls_per_proc = db.Column(db.Float, nullable=False)
-    handles_nhandles = db.Column(db.Integer, nullable=False)
-    handles_avg_handles_per_proc = db.Column(db.Float, nullable=False)
-    handles_nport = db.Column(db.Integer, nullable=False)
-    handles_nfile = db.Column(db.Integer, nullable=False)
-    handles_nevent = db.Column(db.Integer, nullable=False)
-    handles_ndesktop = db.Column(db.Integer, nullable=False)
-    handles_nkey = db.Column(db.Integer, nullable=False)
-    handles_nthread = db.Column(db.Integer, nullable=False)
-    handles_ndirectory = db.Column(db.Integer, nullable=False)
-    handles_nsemaphore = db.Column(db.Integer, nullable=False)
-    handles_ntimer = db.Column(db.Integer, nullable=False)
-    handles_nsection = db.Column(db.Integer, nullable=False)
-    handles_nmutant = db.Column(db.Integer, nullable=False)
-    ldrmodules_not_in_load = db.Column(db.Integer, nullable=False)
-    ldrmodules_not_in_init = db.Column(db.Integer, nullable=False)
-    ldrmodules_not_in_mem = db.Column(db.Integer, nullable=False)
-    ldrmodules_not_in_load_avg = db.Column(db.Float, nullable=False)
-    ldrmodules_not_in_init_avg = db.Column(db.Float, nullable=False)
-    ldrmodules_not_in_mem_avg = db.Column(db.Float, nullable=False)
-    malfind_ninjections = db.Column(db.Integer, nullable=False)
-    malfind_commitCharge = db.Column(db.Integer, nullable=False)
-    malfind_protection = db.Column(db.Integer, nullable=False)
-    malfind_uniqueInjections = db.Column(db.Integer, nullable=False)
-    psxview_not_in_pslist = db.Column(db.Integer, nullable=False)
-    psxview_not_in_eprocess_pool = db.Column(db.Integer, nullable=False)
-    psxview_not_in_ethread_pool = db.Column(db.Integer, nullable=False)
-    psxview_not_in_pspcid_list = db.Column(db.Integer, nullable=False)
-    psxview_not_in_csrss_handles = db.Column(db.Integer, nullable=False)
-    psxview_not_in_session = db.Column(db.Integer, nullable=False)
-    psxview_not_in_deskthrd = db.Column(db.Integer, nullable=False)
-    psxview_not_in_pslist_false_avg = db.Column(db.Float, nullable=False)
-    psxview_not_in_eprocess_pool_false_avg = db.Column(db.Float, nullable=False)
-    psxview_not_in_ethread_pool_false_avg = db.Column(db.Float, nullable=False)
-    psxview_not_in_pspcid_list_false_avg = db.Column(db.Float, nullable=False)
-    psxview_not_in_csrss_handles_false_avg = db.Column(db.Float, nullable=False)
-    psxview_not_in_session_false_avg = db.Column(db.Float, nullable=False)
-    psxview_not_in_deskthrd_false_avg = db.Column(db.Float, nullable=False)
-    modules_nmodules = db.Column(db.Integer, nullable=False)
-    svcscan_nservices = db.Column(db.Integer, nullable=False)
-    svcscan_kernel_drivers = db.Column(db.Integer, nullable=False)
-    svcscan_fs_drivers = db.Column(db.Integer, nullable=False)
-    svcscan_process_services = db.Column(db.Integer, nullable=False)
-    svcscan_shared_process_services = db.Column(db.Integer, nullable=False)
-    svcscan_interactive_process_services = db.Column(db.Integer, nullable=False)
-    svcscan_nactive = db.Column(db.Integer, nullable=False)
-    callbacks_ncallbacks = db.Column(db.Integer, nullable=False)
-    callbacks_nanonymous = db.Column(db.Integer, nullable=False)
-    callbacks_ngeneric = db.Column(db.Integer, nullable=False)
+    mem_name_extn = db.Column(db.String(255), nullable=True)
+    pslist_nproc = db.Column(db.Float, nullable=True)
+    pslist_nppid = db.Column(db.Float, nullable=True)
+    pslist_avg_threads = db.Column(db.Float, nullable=True)
+    pslist_nprocs64bit = db.Column(db.Float, nullable=True)
+    pslist_avg_handlers = db.Column(db.Float, nullable=True)
+    dlllist_ndlls = db.Column(db.Float, nullable=True)
+    dlllist_avg_dllperproc = db.Column(db.Float, nullable=True)
+    handles_nhandles = db.Column(db.Float, nullable=True)
+    handles_avghandles_per_proc = db.Column(db.Float, nullable=True)
+    handles_ntypeport = db.Column(db.Float, nullable=True)
+    handles_ntypefile = db.Column(db.Float, nullable=True)
+    handles_ntypeevent = db.Column(db.Float, nullable=True)
+    handles_ntypedesk = db.Column(db.Float, nullable=True)
+    handles_ntypekey = db.Column(db.Float, nullable=True)
+    handles_ntypethread = db.Column(db.Float, nullable=True)
+    handles_ntypedir = db.Column(db.Float, nullable=True)
+    handles_ntypesemaph = db.Column(db.Float, nullable=True)
+    handles_ntypetimer = db.Column(db.Float, nullable=True)
+    handles_ntypesec = db.Column(db.Float, nullable=True)
+    handles_ntypemutant = db.Column(db.Float, nullable=True)
+    ldrmodules_not_in_load = db.Column(db.Float, nullable=True)
+    ldrmodules_not_in_init = db.Column(db.Float, nullable=True)
+    ldrmodules_not_in_mem = db.Column(db.Float, nullable=True)
+    ldrmodules_not_in_load_avg = db.Column(db.Float, nullable=True)
+    ldrmodules_not_in_init_avg = db.Column(db.Float, nullable=True)
+    ldrmodules_not_in_mem_avg = db.Column(db.Float, nullable=True)
+    malfind_ninjections = db.Column(db.Float, nullable=True)
+    malfind_commitcharge = db.Column(db.Float, nullable=True)
+    malfind_protection = db.Column(db.Float, nullable=True)
+    malfind_uniqueinjections = db.Column(db.Float, nullable=True)
+    modules_nmodules = db.Column(db.Float, nullable=True)
+    svcscan_nservices = db.Column(db.Float, nullable=True)
+    svcscan_type_kernel_driver = db.Column(db.Float, nullable=True)
+    svcscan_type_filesys_driver = db.Column(db.Float, nullable=True)
+    svcscan_type_own = db.Column(db.Float, nullable=True)
+    svcscan_type_share = db.Column(db.Float, nullable=True)
+    svcscan_state_run = db.Column(db.Float, nullable=True)
+    callbacks_ncallbacks = db.Column(db.Float, nullable=True)
     file_class = db.Column(
         "analysis_file_class",
         db.Enum("malware", "benign", "undefined", name="analysis_file_class"),
@@ -150,20 +133,20 @@ class Analysis(db.Model):
             "pslist_nprocs64bit": self.pslist_nprocs64bit,
             "pslist_avg_handlers": self.pslist_avg_handlers,
             "dlllist_ndlls": self.dlllist_ndlls,
-            "dlllist_avg_dlls_per_proc": self.dlllist_avg_dlls_per_proc,
+            "dlllist_avg_dllperproc": self.dlllist_avg_dllperproc,
             "handles_nhandles": self.handles_nhandles,
-            "handles_avg_handles_per_proc": self.handles_avg_handles_per_proc,
-            "handles_nport": self.handles_nport,
-            "handles_nfile": self.handles_nfile,
-            "handles_nevent": self.handles_nevent,
-            "handles_ndesktop": self.handles_ndesktop,
-            "handles_nkey": self.handles_nkey,
-            "handles_nthread": self.handles_nthread,
-            "handles_ndirectory": self.handles_ndirectory,
-            "handles_nsemaphore": self.handles_nsemaphore,
-            "handles_ntimer": self.handles_ntimer,
-            "handles_nsection": self.handles_nsection,
-            "handles_nmutant": self.handles_nmutant,
+            "handles_avghandles_per_proc": self.handles_avghandles_per_proc,
+            "handles_ntypeport": self.handles_ntypeport,
+            "handles_ntypefile": self.handles_ntypefile,
+            "handles_ntypeevent": self.handles_ntypeevent,
+            "handles_ntypedesk": self.handles_ntypedesk,
+            "handles_ntypekey": self.handles_ntypekey,
+            "handles_ntypethread": self.handles_ntypethread,
+            "handles_ntypedir": self.handles_ntypedir,
+            "handles_ntypesemaph": self.handles_ntypesemaph,
+            "handles_ntypetimer": self.handles_ntypetimer,
+            "handles_ntypesec": self.handles_ntypesec,
+            "handles_ntypemutant": self.handles_ntypemutant,
             "ldrmodules_not_in_load": self.ldrmodules_not_in_load,
             "ldrmodules_not_in_init": self.ldrmodules_not_in_init,
             "ldrmodules_not_in_mem": self.ldrmodules_not_in_mem,
@@ -171,34 +154,17 @@ class Analysis(db.Model):
             "ldrmodules_not_in_init_avg": self.ldrmodules_not_in_init_avg,
             "ldrmodules_not_in_mem_avg": self.ldrmodules_not_in_mem_avg,
             "malfind_ninjections": self.malfind_ninjections,
-            "malfind_commitCharge": self.malfind_commitCharge,
+            "malfind_commitcharge": self.malfind_commitcharge,
             "malfind_protection": self.malfind_protection,
-            "malfind_uniqueInjections": self.malfind_uniqueInjections,
-            "psxview_not_in_pslist": self.psxview_not_in_pslist,
-            "psxview_not_in_eprocess_pool": self.psxview_not_in_eprocess_pool,
-            "psxview_not_in_ethread_pool": self.psxview_not_in_ethread_pool,
-            "psxview_not_in_pspcid_list": self.psxview_not_in_pspcid_list,
-            "psxview_not_in_csrss_handles": self.psxview_not_in_csrss_handles,
-            "psxview_not_in_session": self.psxview_not_in_session,
-            "psxview_not_in_deskthrd": self.psxview_not_in_deskthrd,
-            "psxview_not_in_pslist_false_avg": self.psxview_not_in_pslist_false_avg,
-            "psxview_not_in_eprocess_pool_false_avg": self.psxview_not_in_eprocess_pool_false_avg,
-            "psxview_not_in_ethread_pool_false_avg": self.psxview_not_in_ethread_pool_false_avg,
-            "psxview_not_in_pspcid_list_false_avg": self.psxview_not_in_pspcid_list_false_avg,
-            "psxview_not_in_csrss_handles_false_avg": self.psxview_not_in_csrss_handles_false_avg,
-            "psxview_not_in_session_false_avg": self.psxview_not_in_session_false_avg,
-            "psxview_not_in_deskthrd_false_avg": self.psxview_not_in_deskthrd_false_avg,
+            "malfind_uniqueinjections": self.malfind_uniqueinjections,
             "modules_nmodules": self.modules_nmodules,
             "svcscan_nservices": self.svcscan_nservices,
-            "svcscan_kernel_drivers": self.svcscan_kernel_drivers,
-            "svcscan_fs_drivers": self.svcscan_fs_drivers,
-            "svcscan_process_services": self.svcscan_process_services,
-            "svcscan_shared_process_services": self.svcscan_shared_process_services,
-            "svcscan_interactive_process_services": self.svcscan_interactive_process_services,
-            "svcscan_nactive": self.svcscan_nactive,
+            "svcscan_type_kernel_driver": self.svcscan_type_kernel_driver,
+            "svcscan_type_filesys_driver": self.svcscan_type_filesys_driver,
+            "svcscan_type_own": self.svcscan_type_own,
+            "svcscan_type_share": self.svcscan_type_share,
+            "svcscan_state_run": self.svcscan_state_run,
             "callbacks_ncallbacks": self.callbacks_ncallbacks,
-            "callbacks_nanonymous": self.callbacks_nanonymous,
-            "callbacks_ngeneric": self.callbacks_ngeneric,
             "file_class": self.file_class,
             "created_at": self.created_at,
         }

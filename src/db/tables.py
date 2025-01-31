@@ -20,3 +20,10 @@ def delete_table(table_name):
         with connection.cursor() as cursor:
             cursor.execute(f"DROP TABLE {table_name}")
             connection.commit()
+
+
+def is_table_empty(table_name):
+    with create_connection() as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(f"SELECT COUNT(*) FROM {table_name}")
+            return cursor.fetchone()[0] == 0

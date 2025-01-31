@@ -1,9 +1,11 @@
-from flask import current_app as app
+from flask import current_app as app, jsonify
+from ..db.models import Analysis
 
 
 @app.get("/analysis/")
 def list_analysiss():
-    return "List analyses."
+    analyses = Analysis.query.limit(10).all()
+    return jsonify([analysis.as_dict() for analysis in analyses])
 
 
 @app.post("/analysis/")
