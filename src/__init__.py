@@ -5,7 +5,7 @@ def create_app():
     app = Flask(__name__)
 
     with app.app_context():
-        from . import config, db, routes, templates, views
+        from . import config, db, routes, templates
         from .db import initial_data
 
         app.config.from_object(config.Config)
