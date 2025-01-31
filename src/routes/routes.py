@@ -5,7 +5,7 @@ from ..utils import format_error_message
 
 @app.route("/")
 def root():
-    return ({"message": "MalMemSO is running."},)
+    return ({"message": "MalMemSO is running."}, 200)
 
 
 @app.route("/favicon.ico")

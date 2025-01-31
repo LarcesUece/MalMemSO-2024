@@ -1,8 +1,9 @@
 from . import db
+from flask import current_app as app
 
 
 class File(db.Model):
-    __tablename__ = "files"
+    __tablename__ = app.config["TABLE_FILE"]
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(255), nullable=False)
@@ -34,7 +35,7 @@ class File(db.Model):
 
 
 class Model(db.Model):
-    __tablename__ = "models"
+    __tablename__ = app.config["TABLE_MODEL"]
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     algorithm = db.Column(
@@ -56,20 +57,20 @@ class Model(db.Model):
         return {
             "id": self.id,
             "algorithm": self.algorithm,
-            "pickle": self.pickle,
+            # "pickle": self.pickle,
             "train_accuracy": self.train_accuracy,
             "train_precision": self.train_precision,
             "train_recall": self.train_recall,
             "train_f1": self.train_f1,
             "train_init_time": self.train_init_time,
             "train_end_time": self.train_end_time,
-            "train_duration": self.train_duration,
+            # "train_duration": self.train_duration,
             "created_at": self.created_at,
         }
 
 
 class Analysis(db.Model):
-    __tablename__ = "analyses"
+    __tablename__ = app.config["TABLE_ANALYSIS"]
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     initial_data = db.Column(db.Boolean, nullable=False, default=False)

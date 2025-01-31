@@ -22,6 +22,7 @@ def create_connection():
         connection = connect(
             user=user, password=password, database=database, host=host, port=port
         )
+        app.logger.info("Connected to the database.")
     except Error:
         raise Error("Failed to connect to the database.")
 

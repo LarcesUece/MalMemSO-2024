@@ -1,6 +1,7 @@
 from flask import current_app as app, request
 from ..db import db
 from ..db.models import Model
+from ..training import train_all
 
 
 @app.get("/model/")
@@ -13,6 +14,12 @@ def list_models() -> list:
 def get_models_info() -> dict:
     models = Model.query.all()
     return {"models": len(models)}
+
+
+@app.get("/model/train/")
+def train_models():
+    train_all()
+    return {"status": "ok"}
 
 
 @app.post("/model/")

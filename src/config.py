@@ -9,6 +9,7 @@ class Config:
     DIR_ROOT = os.path.join(DIR_SRC, os.pardir)
     DIR_DATA = os.path.join(DIR_ROOT, "data")
     DIR_INITIAL_DATA = os.path.join(DIR_DATA, "initial_data")
+    DIR_PICKLE = os.path.join(DIR_DATA, "pickle")
     DIR_LIBS = os.path.join(DIR_ROOT, "libs")
     DIR_VOLATILITY = os.path.join(DIR_LIBS, "volatility3")
     DIR_VOLMEMLYZER = os.path.join(DIR_LIBS, "volmemlyzer")
@@ -200,3 +201,11 @@ class Config:
             # 'virtmap': extract_virtmap_features
         }
         """
+
+    TRAINING_ALGORITHMS = [
+        "cart",
+        "knn",
+        "mlp",
+        "rf",
+        #    "svm"
+    ]
