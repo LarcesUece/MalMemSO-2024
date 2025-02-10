@@ -44,17 +44,19 @@ def create_model(
         raise ValueError("Invalid algorithm.")
 
 
-def train_all(data: pd.DataFrame = None) -> None:
+def train_all(app, data: pd.DataFrame = None) -> None:
     """Train model for every algorithm available."""
 
-    algorithms = app.config.get("TRAINING_ALGORITHMS")
+    with app.app_context():
 
-    for algorithm in algorithms:
-        app.logger.info(f"Training model for algorithm {algorithm}.")
-        model = create_model(algorithm)
-        app.logger.info(f"Model created for algorithm {algorithm}.")
-        train(model, data)
-        app.logger.info(f"Model trained for algorithm {algorithm}.")
+        algorithms = app.config.get("TRAINING_ALGORITHMS")
+
+        for algorithm in algorithms:
+            app.logger.info(f"Training model for algorithm {algorithm}.")
+            model = create_model(algorithm)
+            app.logger.info(f"Model created for algorithm {algorithm}.")
+            train(model, data)
+            app.logger.info(f"Model trained for algorithm {algorithm}.")
 
 
 def train(

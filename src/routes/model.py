@@ -1,25 +1,33 @@
 from flask import current_app as app, request
+from threading import Thread
 from ..db import db
 from ..db.models import Model
 from ..training import train_all
 
 
 @app.get("/model/")
-def list_models() -> list:
+def get_models() -> list:
     models = Model.query.all()
-    return [model.as_dict() for model in models]
+    return {"models": [model.as_dict() for model in models]}
 
 
-@app.get("/model/info/")
-def get_models_info() -> dict:
-    models = Model.query.all()
-    return {"models": len(models)}
+@app.get("/model/count/")
+def get_models_count() -> dict:
+    count = Model.query.count()
+    return {"models": count}
+
+
+@app.get("/model/<int:id>")
+def get_model(id: int) -> dict:
+    model = Model.query.get_or_404(id)
+    return model.as_dict()
 
 
 @app.get("/model/train/")
 def train_models():
-    train_all()
-    return {"status": "ok"}
+    thread = Thread(target=train_all, args=(app._get_current_object(),))
+    thread.start()
+    return {"message": "training started"}, 202
 
 
 @app.post("/model/")
@@ -28,12 +36,6 @@ def post_model() -> dict:
     model = Model(**data)
     db.session.add(model)
     db.session.commit()
-    return model.as_dict()
-
-
-@app.get("/model/<int:id>")
-def get_model(id: int) -> dict:
-    model = Model.query.get_or_404(id)
     return model.as_dict()
 
 

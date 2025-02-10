@@ -203,10 +203,4 @@ class Config:
         }
         """
 
-    TRAINING_ALGORITHMS = [
-        "cart",
-        "knn",
-        "mlp",
-        "rf",
-        #    "svm"
-    ]
+    TRAINING_ALGORITHMS = ["cart", "knn", "mlp", "rf", "svm"]
