@@ -1,7 +1,9 @@
 from flask import current_app as app
 import pandas as pd
 from . import db
-from .models import Model, Report
+from ..models.models import Model
+
+from ..reports.models import Report
 
 
 def fetch_data_for_training() -> pd.DataFrame:

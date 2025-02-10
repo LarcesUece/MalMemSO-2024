@@ -1,11 +1,17 @@
 from flask import current_app as app, request
-from ..db.models import Report
+
 from ..db import db
+from .models import Report
+from .utils import get_numeric_columns_average
 
 
 @app.get("/report/")
 def get_reports() -> list:
-    reports = Report.query.limit(10).all()
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 10, type=int)
+    offset = (page - 1) * per_page
+    reports = Report.query.offset(offset).limit(per_page).all()
+
     return {"reports": [report.as_dict() for report in reports]}
 
 
@@ -13,6 +19,11 @@ def get_reports() -> list:
 def get_reports_count() -> dict:
     count = Report.query.count()
     return {"reports": count}
+
+
+@app.get("/report/average/")
+def get_reports_average() -> dict:
+    return {"reports": get_numeric_columns_average()}
 
 
 @app.get("/report/<int:id>")

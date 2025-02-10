@@ -1,7 +1,7 @@
 from flask import current_app as app, request
 from threading import Thread
 from ..db import db
-from ..db.models import Model
+from .models import Model
 from ..training import train_all
 
 

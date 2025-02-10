@@ -1,6 +1,6 @@
 from flask import current_app as app, send_from_directory
 from werkzeug.exceptions import HTTPException
-from ..utils import format_error_message
+from .utils import format_error_message
 
 
 @app.route("/")

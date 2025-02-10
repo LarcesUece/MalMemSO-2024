@@ -6,7 +6,19 @@ def create_app():
     app.logger.info("App created.")
 
     with app.app_context():
-        from . import config, db, routes, templates, training, utils
+        from . import (
+            analysis,
+            classification,
+            config,
+            db,
+            dumps,
+            models,
+            reports,
+            routes,
+            templates,
+            training,
+            utils,
+        )
         from .db import initial_data
 
         app.config.from_object(config.Config)
