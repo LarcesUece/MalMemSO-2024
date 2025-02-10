@@ -15,7 +15,7 @@ from sklearn.metrics import (
     f1_score,
     recall_score,
 )
-from .db import db
+import os
 from .db.training import insert_training_data, fetch_data_for_training
 
 
@@ -130,15 +130,17 @@ def generate_training_details(
     """Generate a dictionary with the training details."""
 
     filename = generate_pickle_filename(algorithm, init_dt)
+    pickle_path = os.path.join(app.config["DIR_PICKLE"], filename)
     try:
-        joblib.dump(model, filename=filename)
+        joblib.dump(model, filename=pickle_path)
     except Exception:
         raise ("Error while saving the model to a pickle file.")
 
     try:
         training_details = {
             "algorithm": algorithm,
-            "pickle": convert_pickle_to_bytea(filename),
+            "pickle": convert_pickle_to_bytea(pickle_path),
+            "pickle_name": filename,
             "train_accuracy": float(accuracy_score(y_test, y_pred)),
             "train_precision": float(average_precision_score(y_test, y_pred)),
             "train_recall": float(recall_score(y_test, y_pred)),
