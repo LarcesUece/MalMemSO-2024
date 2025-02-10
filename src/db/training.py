@@ -1,13 +1,13 @@
 from flask import current_app as app
 import pandas as pd
 from . import db
-from .models import Model, Analysis
+from .models import Model, Report
 
 
 def fetch_data_for_training() -> pd.DataFrame:
-    analyses = Analysis.query.filter(Analysis.file_class != "undefined").all()
-    analyses_df = pd.DataFrame([analysis.as_dict() for analysis in analyses])
-    return analyses_df
+    reports = Report.query.filter(Report.file_class != "undefined").all()
+    reports_df = pd.DataFrame([report.as_dict() for report in reports])
+    return reports_df
 
 
 def insert_training_data(data: dict) -> None:

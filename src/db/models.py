@@ -3,7 +3,7 @@ from flask import current_app as app
 
 
 class File(db.Model):
-    __tablename__ = app.config["TABLE_FILE"]
+    __tablename__ = app.config.get("TABLE_FILE", "files")
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(255), nullable=False)
@@ -35,7 +35,7 @@ class File(db.Model):
 
 
 class Model(db.Model):
-    __tablename__ = app.config["TABLE_MODEL"]
+    __tablename__ = app.config.get("TABLE_MODEL", "models")
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     algorithm = db.Column(
@@ -44,6 +44,7 @@ class Model(db.Model):
         nullable=False,
     )
     pickle = db.Column(db.PickleType, nullable=False)
+    pickle_name = db.Column(db.String(255), nullable=False)
     train_accuracy = db.Column(db.Float, nullable=False)
     train_precision = db.Column(db.Float, nullable=False)
     train_recall = db.Column(db.Float, nullable=False)
@@ -57,20 +58,20 @@ class Model(db.Model):
         return {
             "id": self.id,
             "algorithm": self.algorithm,
-            # "pickle": self.pickle,
+            "pickle_name": self.pickle_name,
             "train_accuracy": self.train_accuracy,
             "train_precision": self.train_precision,
             "train_recall": self.train_recall,
             "train_f1": self.train_f1,
             "train_init_time": self.train_init_time,
             "train_end_time": self.train_end_time,
-            # "train_duration": self.train_duration,
+            "train_duration": self.train_duration.total_seconds(),
             "created_at": self.created_at,
         }
 
 
-class Analysis(db.Model):
-    __tablename__ = app.config["TABLE_ANALYSIS"]
+class Report(db.Model):
+    __tablename__ = app.config.get("TABLE_REPORT", "reports")
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     initial_data = db.Column(db.Boolean, nullable=False, default=False)
@@ -115,8 +116,8 @@ class Analysis(db.Model):
     svcscan_state_run = db.Column(db.Float, nullable=True)
     callbacks_ncallbacks = db.Column(db.Float, nullable=True)
     file_class = db.Column(
-        "analysis_file_class",
-        db.Enum("malware", "benign", "undefined", name="analysis_file_class"),
+        "report_file_class",
+        db.Enum("malware", "benign", "undefined", name="report_file_class"),
         nullable=False,
         default="undefined",
     )

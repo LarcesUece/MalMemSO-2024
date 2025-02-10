@@ -14,7 +14,7 @@ class Config:
     DIR_VOLATILITY = os.path.join(DIR_LIBS, "volatility3")
     DIR_VOLMEMLYZER = os.path.join(DIR_LIBS, "volmemlyzer")
 
-    TABLE_ANALYSIS = "analyses"
+    TABLE_REPORT = "reports"
     TABLE_FILE = "files"
     TABLE_MODEL = "models"
 
@@ -92,7 +92,7 @@ class Config:
 
     VOLMEMLYZER_NEW_COLUMNS = [
         "mem.name_extn",
-        "analysis_file_class",
+        "report_file_class",
         None,
         "callbacks.ncallbacks",
         None,
