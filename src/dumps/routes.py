@@ -8,7 +8,10 @@ from ..db import db
 
 @app.get("/dump/")
 def get_dumps() -> list:
-    dumps = Dump.query.all()
+    page = request.args.get("page", 1, type=int)
+    limit = request.args.get("limit", 10, type=int)
+    offset = (page - 1) * limit
+    dumps = Dump.query.offset(offset).limit(limit).all()
     return {"dumps": [dump.as_dict() for dump in dumps]}
 
 

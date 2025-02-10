@@ -7,7 +7,10 @@ from ..training import train_all
 
 @app.get("/model/")
 def get_models() -> list:
-    models = Model.query.all()
+    page = request.args.get("page", 1, type=int)
+    limit = request.args.get("limit", 10, type=int)
+    offset = (page - 1) * limit
+    models = Model.query.offset(offset).limit(limit).all()
     return {"models": [model.as_dict() for model in models]}
 
 

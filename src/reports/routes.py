@@ -8,10 +8,9 @@ from .utils import get_numeric_columns_average
 @app.get("/report/")
 def get_reports() -> list:
     page = request.args.get("page", 1, type=int)
-    per_page = request.args.get("per_page", 10, type=int)
-    offset = (page - 1) * per_page
-    reports = Report.query.offset(offset).limit(per_page).all()
-
+    limit = request.args.get("limit", 10, type=int)
+    offset = (page - 1) * limit
+    reports = Report.query.offset(offset).limit(limit).all()
     return {"reports": [report.as_dict() for report in reports]}
 
 
