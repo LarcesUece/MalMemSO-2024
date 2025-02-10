@@ -43,10 +43,10 @@ def edit_output_file(target_file, new_output):
 
 
 def run():
-    volmemlyzer_file = app.config["VOLMEMLYZER_FILE"]
-    processing_raw_dir = app.config["PROCESSING_RAW_DIR"]
-    csv_dir = app.config["CSV_DIR"]
-    volatility_file = app.config["VOLATILITY_FILE"]
+    volmemlyzer_file = app.config.get("VOLMEMLYZER_FILE")
+    processing_raw_dir = app.config.get("PROCESSING_RAW_DIR")
+    csv_dir = app.config.get("CSV_DIR")
+    volatility_file = app.config.get("VOLATILITY_FILE")
 
     print("Inicando execução do VolMemLyzer.")
     command = [

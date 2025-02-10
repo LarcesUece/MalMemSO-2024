@@ -6,8 +6,8 @@ from .tables import is_table_empty
 
 
 def insert_initial_data() -> None:
-    dir = app.config["DIR_INITIAL_DATA"]
-    table_name = app.config["TABLE_REPORT"]
+    dir = app.config.get("DIR_INITIAL_DATA")
+    table_name = app.config.get("TABLE_REPORT")
 
     if not os.path.exists(dir):
         return
@@ -22,8 +22,8 @@ def insert_initial_data() -> None:
 
 
 def insert_data_from_csv(file):
-    header_mapping = app.config["VOLMEMLYZER_COLUMN_MAPPING"]
-    table_name = app.config["TABLE_REPORT"]
+    header_mapping = app.config.get("VOLMEMLYZER_COLUMN_MAPPING")
+    table_name = app.config.get("TABLE_REPORT")
     valid_columns = [col for col in header_mapping.values() if col is not None]
 
     df = pd.read_csv(file)

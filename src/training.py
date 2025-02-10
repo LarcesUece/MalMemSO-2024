@@ -47,7 +47,7 @@ def create_model(
 def train_all(data: pd.DataFrame = None) -> None:
     """Train model for every algorithm available."""
 
-    algorithms = app.config["TRAINING_ALGORITHMS"]
+    algorithms = app.config.get("TRAINING_ALGORITHMS")
 
     for algorithm in algorithms:
         app.logger.info(f"Training model for algorithm {algorithm}.")
@@ -130,7 +130,7 @@ def generate_training_details(
     """Generate a dictionary with the training details."""
 
     filename = generate_pickle_filename(algorithm, init_dt)
-    pickle_path = os.path.join(app.config["DIR_PICKLE"], filename)
+    pickle_path = os.path.join(app.config.get("DIR_PICKLE"), filename)
     try:
         joblib.dump(model, filename=pickle_path)
     except Exception:

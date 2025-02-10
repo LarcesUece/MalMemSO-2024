@@ -11,8 +11,8 @@ from src import report, zip
 class ZIPView(MethodView):
     def __init__(self):
         self.methods = ["POST"]
-        self.zip_dir = app.config["ZIP_DIR"]
-        self.timestamp_format = app.config["TIMESTAMP_FORMAT"]
+        self.zip_dir = app.config.get("ZIP_DIR")
+        self.timestamp_format = app.config.get("TIMESTAMP_FORMAT")
 
     def post(self):
         if "file" not in request.files:
@@ -42,7 +42,7 @@ class ZIPView(MethodView):
 class IDView(MethodView):
     def __init__(self):
         self.methods = ["GET"]
-        self.report_file = app.config["REPORT_FILE"]
+        self.report_file = app.config.get("REPORT_FILE")
 
     def get(self, file_id):
         data, status_code = report.get_report(file_id)

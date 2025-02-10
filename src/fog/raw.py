@@ -6,8 +6,8 @@ from src import volmemlyzer
 
 
 def process_raw_file(file_path, file_id):
-    updated_vol_modules = app.config["UPDATED_VOL_MODULES"]
-    volmemlyzer_file = app.config["VOLMEMLYZER_FILE"]
+    updated_vol_modules = app.config.get("UPDATED_VOL_MODULES")
+    volmemlyzer_file = app.config.get("VOLMEMLYZER_FILE")
     csv_output = f"{file_id}.csv"
 
     processing_file_path = _move_raw(file_path)
@@ -21,9 +21,9 @@ def process_raw_file(file_path, file_id):
 
 def _move_raw(file_path, processed=False):
     new_dir = (
-        app.config["PROCESSED_RAW_DIR"]
+        app.config.get("PROCESSED_RAW_DIR")
         if processed
-        else app.config["PROCESSING_RAW_DIR"]
+        else app.config.get("PROCESSING_RAW_DIR")
     )
 
     shutil.move(file_path, new_dir)

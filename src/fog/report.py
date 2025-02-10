@@ -7,7 +7,7 @@ from app import app
 
 
 def create_report_file():
-    report_file = app.config["REPORT_FILE"]
+    report_file = app.config.get("REPORT_FILE")
 
     if not exists(report_file):
         df = DataFrame(
@@ -36,7 +36,7 @@ def update_report(
     status=None,
     message=None,
 ):
-    report_file = app.config["REPORT_FILE"]
+    report_file = app.config.get("REPORT_FILE")
     df = read_csv(report_file)
 
     if file_id in df["file_id"].values:
@@ -75,7 +75,7 @@ def update_report(
 
 
 def generate_file_id():
-    report_file = app.config["REPORT_FILE"]
+    report_file = app.config.get("REPORT_FILE")
 
     df = read_csv(report_file)
     existing_file_ids = df["file_id"].values
@@ -90,7 +90,7 @@ def generate_file_id():
 
 
 def get_report(file_id):
-    report_file = app.config["REPORT_FILE"]
+    report_file = app.config.get("REPORT_FILE")
     df = read_csv(report_file)
 
     if file_id in df["file_id"].values:

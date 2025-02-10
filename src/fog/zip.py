@@ -11,7 +11,7 @@ def process_zip_file(file_path, file_id):
 
 
 def _unzip_file(file_path):
-    unprocessed_raw_dir = app.config["UNPROCESSED_RAW_DIR"]
+    unprocessed_raw_dir = app.config.get("UNPROCESSED_RAW_DIR")
 
     with ZipFile(file_path, "r") as file:
         if len(file.namelist()) != 1:
