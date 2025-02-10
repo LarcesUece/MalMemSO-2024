@@ -18,6 +18,7 @@ def create_app():
             templates,
             training,
             utils,
+            volmemlyzer,
         )
         from .db import initial_data
 
@@ -31,5 +32,7 @@ def create_app():
         app.logger.info("Database created.")
         initial_data.insert_initial_data()
         app.logger.info("Initial data inserted.")
+        volmemlyzer.init_lib()
+        app.logger.info("VolMemLyzer initialized.")
 
     return app

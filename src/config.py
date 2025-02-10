@@ -7,15 +7,22 @@ class Config:
 
     DIR_SRC = os.path.dirname(os.path.abspath(__file__))
     DIR_ROOT = os.path.join(DIR_SRC, os.pardir)
+
     DIR_DATA = os.path.join(DIR_ROOT, "data")
+    DIR_CSV = os.path.join(DIR_DATA, "csv")
     DIR_INITIAL_DATA = os.path.join(DIR_DATA, "initial_data")
     DIR_PICKLE = os.path.join(DIR_DATA, "pickle")
+    DIR_RAW = os.path.join(DIR_DATA, "raw")
+    DIR_ZIP = os.path.join(DIR_DATA, "zip")
+
     DIR_LIBS = os.path.join(DIR_ROOT, "libs")
     DIR_VOLATILITY = os.path.join(DIR_LIBS, "volatility3")
     DIR_VOLMEMLYZER = os.path.join(DIR_LIBS, "volmemlyzer")
+    FILE_VOLATILITY = os.path.join(DIR_VOLATILITY, "vol.py")
+    FILE_VOLMEMLYZER = os.path.join(DIR_VOLMEMLYZER, "VolMemLyzer-V2.py")
 
     TABLE_REPORT = "reports"
-    TABLE_FILE = "files"
+    TABLE_DUMP = "dumps"
     TABLE_MODEL = "models"
 
     POSTGRES_USER = os.getenv("POSTGRES_USER")

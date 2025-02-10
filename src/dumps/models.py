@@ -6,9 +6,11 @@ class Dump(db.Model):
     __tablename__ = app.config.get("TABLE_DUMP", "dumps")
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    report_id = db.Column(db.Integer, db.ForeignKey("reports.id"), nullable=True)
     name = db.Column(db.String(255), nullable=False)
-    path = db.Column(db.String(512), nullable=False)
-    size = db.Column(db.BigInteger, nullable=False)
+    zip_path = db.Column(db.String(512), nullable=False)
+    raw_path = db.Column(db.String(512), nullable=True)
+    size = db.Column(db.BigInteger, nullable=True)
     status = db.Column(
         "file_status",
         db.Enum("processing", "processed", "failed", "waiting", name="file_status"),
@@ -26,7 +28,8 @@ class Dump(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "path": self.path,
+            "zip_path": self.zip_path,
+            "raw_path": self.raw_path,
             "size": self.size,
             "status": self.status,
             "platform": self.platform,

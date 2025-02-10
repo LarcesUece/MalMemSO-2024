@@ -1,8 +1,10 @@
 from flask import current_app as app, request
 from datetime import datetime
+from threading import Thread
 import os
 
 from .models import Dump
+from .utils import process_dump
 from ..db import db
 
 
@@ -29,7 +31,7 @@ def get_dump(id: int) -> dict:
 
 @app.post("/dump/")
 def post_dump() -> dict:
-    if "file" not in request.dumps:
+    if "file" not in request.files:
         return {"error": "No file part."}, 400
 
     file = request.files.get("file")
@@ -41,17 +43,20 @@ def post_dump() -> dict:
     if not file.filename.endswith(".zip"):
         return {"error": "Invalid file extension."}, 400
 
-    path = os.path.join(app.config.get("DIR_ZIP"), file.filename)
-    file.save(path)
+    name = file.filename.split(".")[0]
+    zip_path = os.path.join(app.config.get("DIR_ZIP"), file.filename)
+    file.save(zip_path)
 
     dump = Dump(
-        name=file.filename,
-        path=path,
-        size=os.path.getsize(path),
+        name=name,
+        zip_path=zip_path,
         received_at=received_at,
     )
     db.session.add(dump)
     db.session.commit()
+
+    thread = Thread(target=process_dump, args=(dump.id, app._get_current_object()))
+    thread.start()
 
     return {"dump": dump.as_dict()}, 201
 
