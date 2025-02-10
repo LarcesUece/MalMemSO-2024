@@ -27,7 +27,8 @@ class Config:
     SQLALCHEMY_DATABASE_URI = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    TZ = os.getenv("TZ", "UTC")
+    TZ = "UTC"
+    LOCAL_TZ = os.getenv("LOCAL_TZ", "UTC")
 
     VOLMEMLYZER_OLD_COLUMNS = [
         "Category",

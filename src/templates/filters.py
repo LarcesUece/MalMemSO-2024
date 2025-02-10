@@ -7,6 +7,6 @@ def apply_tz(value):
     if value is None:
         return None
     value = value.replace(tzinfo=timezone("UTC"))
-    tz = timezone(app.config.get("TZ"))
+    tz = timezone(app.config.get("LOCAL_TZ"))
     new_value = value.astimezone(tz).strftime("%Y-%m-%d %H:%M:%S %Z")
     return new_value

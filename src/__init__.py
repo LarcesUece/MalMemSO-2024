@@ -1,5 +1,4 @@
 from flask import Flask
-import time
 
 
 def create_app():
