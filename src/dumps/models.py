@@ -24,7 +24,7 @@ class Dump(db.Model):
     malware_detected = db.Column(db.Boolean, nullable=True)
     created_at = db.Column(db.DateTime, server_default=db.func.now(), nullable=False)
 
-    def as_dict(self):
+    def as_dict(self) -> dict:
         return {
             "id": self.id,
             "name": self.name,

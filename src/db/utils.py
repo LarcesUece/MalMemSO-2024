@@ -1,8 +1,9 @@
 from flask import current_app as app
 import pandas as pd
-from . import db
-from ..models.models import Model
 
+from . import db
+from .postgres import create_connection
+from ..models.models import Model
 from ..reports.models import Report
 
 
@@ -16,3 +17,10 @@ def insert_training_data(data: dict) -> None:
     model = Model(**data)
     db.session.add(model)
     db.session.commit()
+
+
+def is_table_empty(table_name: str) -> bool:
+    with create_connection() as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(f"SELECT COUNT(*) FROM {table_name}")
+            return cursor.fetchone()[0] == 0

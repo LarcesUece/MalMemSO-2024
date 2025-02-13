@@ -16,7 +16,7 @@ from sklearn.metrics import (
     recall_score,
 )
 import os
-from .db.training import insert_training_data, fetch_data_for_training
+from .db.utils import insert_training_data, fetch_data_for_training
 
 
 def create_model(

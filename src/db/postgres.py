@@ -1,8 +1,9 @@
 from psycopg2 import connect, Error
+from psycopg2.extensions import connection
 from flask import current_app as app
 
 
-def create_connection():
+def create_connection() -> connection:
     user = app.config.get("POSTGRES_USER")
     password = app.config.get("POSTGRES_PASSWORD")
     database = app.config.get("POSTGRES_DB")

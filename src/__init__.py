@@ -1,7 +1,7 @@
 from flask import Flask
 
 
-def create_app():
+def create_app() -> Flask:
     app = Flask(__name__)
     app.logger.info("App created.")
 
@@ -15,12 +15,11 @@ def create_app():
             models,
             reports,
             routes,
-            templates,
             training,
             utils,
             volmemlyzer,
         )
-        from .db import initial_data
+        from .db import initial_data, postgres, utils
 
         app.config.from_object(config.Config)
         app.logger.info("Config loaded.")

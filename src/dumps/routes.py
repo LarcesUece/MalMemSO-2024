@@ -1,4 +1,5 @@
 from flask import current_app as app, request
+from flask.typing import ResponseReturnValue
 from datetime import datetime
 from threading import Thread
 import os
@@ -9,32 +10,32 @@ from ..db import db
 
 
 @app.get("/dump/")
-def get_dumps() -> list:
-    page = request.args.get("page", 1, type=int)
-    limit = request.args.get("limit", 10, type=int)
+def get_dumps() -> ResponseReturnValue:
+    page = request.args.get(key="page", default=1, type=int)
+    limit = request.args.get(key="limit", default=10, type=int)
     offset = (page - 1) * limit
-    dumps = Dump.query.offset(offset).limit(limit).all()
+    dumps = Dump.query.offset(offset=offset).limit(limit=limit).all()
     return {"dumps": [dump.as_dict() for dump in dumps]}
 
 
 @app.get("/dump/count/")
-def get_dumps_count() -> dict:
+def get_dumps_count() -> ResponseReturnValue:
     count = Dump.query.count()
     return {"dumps": count}
 
 
 @app.get("/dump/<int:id>")
-def get_dump(id: int) -> dict:
-    dump = Dump.query.get_or_404(id)
+def get_dump(id: int) -> ResponseReturnValue:
+    dump = Dump.query.get_or_404(ident=id)
     return {"dump": dump.as_dict()}
 
 
 @app.post("/dump/")
-def post_dump() -> dict:
+def post_dump() -> ResponseReturnValue:
     if "file" not in request.files:
         return {"error": "No file part."}, 400
 
-    file = request.files.get("file")
+    file = request.files.get(key="file")
     received_at = datetime.now()
 
     if file.filename == "":
@@ -62,7 +63,7 @@ def post_dump() -> dict:
 
 
 @app.patch("/dump/<int:id>")
-def patch_dump(id: int) -> dict:
+def patch_dump(id: int) -> ResponseReturnValue:
     dump = Dump.query.get_or_404(id)
     data = request.json
     for key, value in data.items():
@@ -72,7 +73,7 @@ def patch_dump(id: int) -> dict:
 
 
 @app.delete("/dump/<int:id>")
-def delete_dump(id: int) -> dict:
+def delete_dump(id: int) -> ResponseReturnValue:
     dump = Dump.query.get_or_404(id)
     db.session.delete(dump)
     db.session.commit()

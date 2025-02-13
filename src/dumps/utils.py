@@ -3,7 +3,7 @@ from zipfile import ZipFile
 from os.path import join, getsize
 from datetime import datetime
 from ..db import db
-import volmemlyzer
+from .. import volmemlyzer
 from .models import Dump
 
 
