@@ -1,38 +1,38 @@
-# malware-detection
+# MalMemSO / device
 
-A complete tool for malware detection and containment.
+- Extraction of a memory dump file (.raw)
+- Compression of the raw file (.zip)
+- Sending the compressed file to the fog server
+- To be implemented.
 
-## table of contents
+Operating systems supported: Windows 10.
 
-- [repository structure](#repository-structure)
-  - [device](#device)
-  - [fog](#fog)
-  - [cloud](#cloud)
+## instructions
 
-## repository structure
+Edit the content of `config.example.ini` with the fog server settings and rename it to `config.ini`.
 
-This repository contains three distinct projects, organized into separate folders, that together form the complete malware detection system. Each project is designed to run in a specific environment:
+Run `python src/main.py -t <extraction_tool> -a <system_architecture>`.
 
-### device
+- Extraction tool options: "winpmem" (default), "dumpit".
+- System architecture options: "32bit", "64bit" (default).
+- Run `python src/main.py -h` for help.
 
-This folder contains the code that runs on end devices. It is responsible for extracting memory dumps, compressing them, and sending them to the Fog layer. If malware is detected, the device will handle the situation locally.
+## modules (in order of execution)
 
-- Purpose: Memory dump extraction, compression, and malware remediation.
-- Environment: Windows 10.
-- Technologies: Python.
+### dump_extractor
 
-### fog
+Based on the specified extraction tool and system architecture (WinPmem and 64bit, by default, respectively), extracts a .raw memory dump file and save it on the outputs/raw/ directory.
 
-This folder contains the code for the intermediate layer, which analyzes the memory dumps received from devices and classifies them using a pre-trained model provided by the Cloud layer. The classification result determines whether malware is present.
+### file_compressor
 
-- Purpose: Data analysis, classification, and forwarding results to the devices.
-- Environment:
-- Technologies: Flask
+Compresses the .raw file to a .zip file and save it on the outputs/zip/ directory.
 
-### cloud
+### file_sender
 
-This folder contains the cloud-level project, which trains and updates the machine learning model used for malware detection. The trained model is then sent to the Fog layer for real-time analysis and classification.
+Connects with the fog server and sends the extracted dump .zip file to be analyzed.
 
-- Purpose: Model training, storage, and distribution to the Fog layer.
-- Environment:
-- Technologies:
+### response_getter
+### disable_network
+### malware_remover
+### network_enabler
+### dump_cleaner

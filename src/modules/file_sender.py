@@ -10,13 +10,13 @@ def send_file(
     filepath: str, server_data: SectionProxy, endpoint_data: SectionProxy
 ) -> str:
     connection = get_connection(server_data)
-    token = get_token(connection, server_data, endpoint_data)
+    # token = get_token(connection, server_data, endpoint_data)
 
     upload_endpoint = validate_endpoint(endpoint_data["upload"])
     filename = basename(filepath)
 
     headers = {
-        "Authorization": f"Bearer {token}",
+        # "Authorization": f"Bearer {token}",
         "Content-Type": "multipart/form-data",
         "Filename": filename,
     }

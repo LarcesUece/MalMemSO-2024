@@ -30,7 +30,7 @@ def validate_server_data(data: dict) -> None:
         error(error_message)
         raise ValueError(error_message)
 
-    for key in ["host", "port", "username", "password", "endpoint", "timeout"]:
+    for key in ["host", "port", "username", "password", "timeout"]:
         if key not in data:
             error_message = f"Server data is missing key: {key}"
             error(error_message)

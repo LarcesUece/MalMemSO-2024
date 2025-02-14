@@ -18,11 +18,7 @@ if __name__ == "__main__":
     raw_dump_filepath = extract_dump(**vars(args))
     compressed_dump_filepath = compress_file(raw_dump_filepath)
     filename = send_file(compressed_dump_filepath, SERVER_DATA, ENDPOINT_DATA)
-
-    response = None
-    while response is None:
-        response = get_response(filename, SERVER_DATA, ENDPOINT_DATA)
-        sleep(60)
+    response = get_response(filename, SERVER_DATA, ENDPOINT_DATA)
 
     # if response:
     #     disable_network()
