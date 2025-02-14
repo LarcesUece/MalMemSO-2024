@@ -7,7 +7,7 @@ class Report(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     initial_data = db.Column(db.Boolean, nullable=False, default=False)
-    file_id = db.Column(db.Integer, db.ForeignKey("files.id"), nullable=True)
+    dump_id = db.Column(db.Integer, db.ForeignKey("dumps.id"), nullable=True)
     mem_name_extn = db.Column(db.String(255), nullable=True)
     pslist_nproc = db.Column(db.Float, nullable=True)
     pslist_nppid = db.Column(db.Float, nullable=True)
@@ -59,7 +59,7 @@ class Report(db.Model):
         return {
             "id": self.id,
             "initial_data": self.initial_data,
-            "file_id": self.file_id,
+            "dump_id": self.dump_id,
             "mem_name_extn": self.mem_name_extn,
             "pslist_nproc": self.pslist_nproc,
             "pslist_nppid": self.pslist_nppid,

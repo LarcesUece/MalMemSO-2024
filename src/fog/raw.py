@@ -5,10 +5,10 @@ from app import app
 from src import volmemlyzer
 
 
-def process_raw_file(file_path, file_id):
+def process_raw_file(file_path, dump_id):
     updated_vol_modules = app.config.get("UPDATED_VOL_MODULES")
     volmemlyzer_file = app.config.get("VOLMEMLYZER_FILE")
-    csv_output = f"{file_id}.csv"
+    csv_output = f"{dump_id}.csv"
 
     processing_file_path = _move_raw(file_path)
     volmemlyzer.edit_vol_modules(volmemlyzer_file, updated_vol_modules)

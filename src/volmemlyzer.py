@@ -62,7 +62,7 @@ def edit_input_file_list():
         if line.strip().startswith("file_list ="):
             lines[i] = "    file_list = [args.memdump]\n"
         elif line.strip().startswith("folderpath ="):
-            lines[i] = f"    folderpath = str({raw_dir})\n"
+            lines[i] = f"    folderpath = str('{raw_dir}')\n"
 
     with open(volmemlyzer_file, "w") as file:
         file.writelines(lines)
@@ -73,7 +73,7 @@ def run(filename: str) -> None:
     volmemlyzer_file = app.config.get("FILE_VOLMEMLYZER")
     volatility_file = app.config.get("FILE_VOLATILITY")
 
-    app.logger.info("Inicando execução do VolMemLyzer.")
+    print("Inicando execução do VolMemLyzer.")
     command = [
         "python",
         volmemlyzer_file,
@@ -84,6 +84,7 @@ def run(filename: str) -> None:
         "-V",
         volatility_file,
     ]
+    print(command)
 
     try:
         process = Popen(command, stdout=PIPE, stderr=PIPE)
@@ -91,9 +92,9 @@ def run(filename: str) -> None:
     except Exception:
         raise
 
-    app.logger.info("Análise concluída.")
-    app.logger.info(stdout.decode())
-    app.logger.info(stderr.decode())
+    print("Análise concluída.")
+    print(stdout.decode())
+    print(stderr.decode())
 
 
 def get_report_from_csv(filename: str) -> list | None:
@@ -104,5 +105,6 @@ def get_report_from_csv(filename: str) -> list | None:
 
         for row in reversed(rows):
             if len(row) >= 2 and row[1] == filename:
+                print(row)
                 return row
         return None

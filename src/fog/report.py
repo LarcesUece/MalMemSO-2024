@@ -12,7 +12,7 @@ def create_report_file():
     if not exists(report_file):
         df = DataFrame(
             columns=[
-                "file_id",
+                "dump_id",
                 "platform",
                 "received_at",
                 "processing_started_at",
@@ -27,7 +27,7 @@ def create_report_file():
 
 
 def update_report(
-    file_id,
+    dump_id,
     platform=None,
     received_at=None,
     processing_started_at=None,
@@ -39,28 +39,28 @@ def update_report(
     report_file = app.config.get("REPORT_FILE")
     df = read_csv(report_file)
 
-    if file_id in df["file_id"].values:
+    if dump_id in df["dump_id"].values:
         if platform:
-            df.loc[df["file_id"] == file_id, "platform"] = platform
+            df.loc[df["dump_id"] == dump_id, "platform"] = platform
         if received_at:
-            df.loc[df["file_id"] == file_id, "received_at"] = received_at
+            df.loc[df["dump_id"] == dump_id, "received_at"] = received_at
         if processing_started_at:
-            df.loc[df["file_id"] == file_id, "processing_started_at"] = (
+            df.loc[df["dump_id"] == dump_id, "processing_started_at"] = (
                 processing_started_at
             )
         if processing_finished_at:
-            df.loc[df["file_id"] == file_id, "processing_finished_at"] = (
+            df.loc[df["dump_id"] == dump_id, "processing_finished_at"] = (
                 processing_finished_at
             )
         if malware_detected:
-            df.loc[df["file_id"] == file_id, "malware_detected"] = malware_detected
+            df.loc[df["dump_id"] == dump_id, "malware_detected"] = malware_detected
         if status:
-            df.loc[df["file_id"] == file_id, "status"] = status
+            df.loc[df["dump_id"] == dump_id, "status"] = status
         if message:
-            df.loc[df["file_id"] == file_id, "message"]
+            df.loc[df["dump_id"] == dump_id, "message"]
     else:
         new_row = {
-            "file_id": file_id,
+            "dump_id": dump_id,
             "platform": platform,
             "received_at": received_at,
             "processing_started_at": processing_started_at,
@@ -74,27 +74,27 @@ def update_report(
     df.to_csv(report_file, index=False)
 
 
-def generate_file_id():
+def generate_dump_id():
     report_file = app.config.get("REPORT_FILE")
 
     df = read_csv(report_file)
-    existing_file_ids = df["file_id"].values
-    file_id = str(uuid4())
+    existing_dump_ids = df["dump_id"].values
+    dump_id = str(uuid4())
 
-    while file_id in existing_file_ids:
-        file_id = str(uuid4())
+    while dump_id in existing_dump_ids:
+        dump_id = str(uuid4())
 
-    update_report(file_id, status="generating_id")
+    update_report(dump_id, status="generating_id")
 
-    return file_id
+    return dump_id
 
 
-def get_report(file_id):
+def get_report(dump_id):
     report_file = app.config.get("REPORT_FILE")
     df = read_csv(report_file)
 
-    if file_id in df["file_id"].values:
-        report = df[df["file_id"] == file_id].to_dict(orient="records")[0]
+    if dump_id in df["dump_id"].values:
+        report = df[df["dump_id"] == dump_id].to_dict(orient="records")[0]
 
         for key, value in report.items():
             if isinstance(value, float) and (isnan(value) or isinf(value)):

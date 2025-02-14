@@ -9,11 +9,11 @@ class Config:
     DIR_ROOT = os.path.join(DIR_SRC, os.pardir)
 
     DIR_DATA = os.path.join(DIR_ROOT, "data")
-    DIR_CSV = os.path.join(DIR_DATA, "csv")
+    DIR_CSV = os.path.join(DIR_DATA, "csv_reports")
     DIR_INITIAL_DATA = os.path.join(DIR_DATA, "initial_data")
-    DIR_PICKLE = os.path.join(DIR_DATA, "pickle")
-    DIR_RAW = os.path.join(DIR_DATA, "raw")
-    DIR_ZIP = os.path.join(DIR_DATA, "zip")
+    DIR_PICKLE = os.path.join(DIR_DATA, "trained_models")
+    DIR_RAW = os.path.join(DIR_DATA, "raw_dumps")
+    DIR_ZIP = os.path.join(DIR_DATA, "zip_dumps")
 
     DIR_LIBS = os.path.join(DIR_ROOT, "libs")
     DIR_VOLATILITY = os.path.join(DIR_LIBS, "volatility3")

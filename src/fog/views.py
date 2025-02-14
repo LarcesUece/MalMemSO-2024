@@ -27,16 +27,16 @@ class ZIPView(MethodView):
         if not file.filename.endswith(".zip"):
             return jsonify({"error": "Invalid file extension."}), 400
 
-        file_id = report.generate_file_id()
-        file_path = join(self.zip_dir, file_id + ".zip")
+        dump_id = report.generate_dump_id()
+        file_path = join(self.zip_dir, dump_id + ".zip")
         file.save(file_path)
 
-        report.update_report(file_id, received_at=received_at, status="saved")
+        report.update_report(dump_id, received_at=received_at, status="saved")
 
-        process = Process(target=zip.process_zip_file, args=(file_path, file_id))
+        process = Process(target=zip.process_zip_file, args=(file_path, dump_id))
         process.start()
 
-        return jsonify({"file_id": file_id}), 201
+        return jsonify({"dump_id": dump_id}), 201
 
 
 class IDView(MethodView):
@@ -44,10 +44,10 @@ class IDView(MethodView):
         self.methods = ["GET"]
         self.report_file = app.config.get("REPORT_FILE")
 
-    def get(self, file_id):
-        data, status_code = report.get_report(file_id)
+    def get(self, dump_id):
+        data, status_code = report.get_report(dump_id)
         return jsonify(data), status_code
 
 
 app.add_url_rule("/zip/", view_func=ZIPView.as_view("zip"))
-app.add_url_rule("/id/<file_id>/", view_func=IDView.as_view("id"))
+app.add_url_rule("/id/<dump_id>/", view_func=IDView.as_view("id"))

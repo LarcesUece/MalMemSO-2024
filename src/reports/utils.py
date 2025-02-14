@@ -10,7 +10,7 @@ def get_numeric_columns_average() -> dict:
         column
         for column in Report.__table__.columns
         if isinstance(column.type, (Numeric, Integer, Float))
-        and not column.name in ["id", "file_id"]
+        and not column.name in ["id", "dump_id"]
     ]
 
     avg_expressions = [

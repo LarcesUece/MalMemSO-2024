@@ -87,7 +87,7 @@ def train(
     if data is None:
         data = fetch_data_for_training()
 
-    columns_to_drop = ["mem_name_extn", "initial_data", "file_id", "created_at"]
+    columns_to_drop = ["mem_name_extn", "initial_data", "dump_id", "created_at"]
 
     X = data.copy()
     X = X.drop(columns=columns_to_drop, axis=1)

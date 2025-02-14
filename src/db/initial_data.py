@@ -27,7 +27,7 @@ def insert_data_from_csv(filepath: str) -> None:
     table_name = app.config.get("TABLE_REPORT")
     valid_columns = [col for col in header_mapping.values() if col is not None]
 
-    df = pd.read_csv(filepath=filepath)
+    df = pd.read_csv(filepath_or_buffer=filepath)
 
     filename_options = ["Category", "Filename", "mem.name_extn"]
     if not any(col in df.columns for col in filename_options):
@@ -47,7 +47,7 @@ def insert_data_from_csv(filepath: str) -> None:
     df[str_columns] = df[str_columns].apply(lambda x: x.str.lower())
 
     df["initial_data"] = True
-    df["file_id"] = None
+    df["dump_id"] = None
 
     df.to_sql(name=table_name, con=db.engine, if_exists="append", index=False)
     db.session.commit()

@@ -46,14 +46,14 @@ def post_dump() -> ResponseReturnValue:
 
     name = file.filename.split(".")[0]
     zip_path = os.path.join(app.config.get("DIR_ZIP"), file.filename)
-    file.save(zip_path)
+    file.save(dst=zip_path)
 
     dump = Dump(
         name=name,
         zip_path=zip_path,
         received_at=received_at,
     )
-    db.session.add(dump)
+    db.session.add(instance=dump)
     db.session.commit()
 
     thread = Thread(target=process_dump, args=(dump.id, app._get_current_object()))
@@ -64,17 +64,17 @@ def post_dump() -> ResponseReturnValue:
 
 @app.patch("/dump/<int:id>")
 def patch_dump(id: int) -> ResponseReturnValue:
-    dump = Dump.query.get_or_404(id)
+    dump = Dump.query.get_or_404(ident=id)
     data = request.json
     for key, value in data.items():
-        setattr(dump, key, value)
+        setattr(obj=dump, name=key, value=value)
     db.session.commit()
     return {"dump": dump.as_dict()}
 
 
 @app.delete("/dump/<int:id>")
 def delete_dump(id: int) -> ResponseReturnValue:
-    dump = Dump.query.get_or_404(id)
-    db.session.delete(dump)
+    dump = Dump.query.get_or_404(ident=id)
+    db.session.delete(instance=dump)
     db.session.commit()
     return "", 204
