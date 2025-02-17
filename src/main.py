@@ -12,7 +12,7 @@ from modules import (
 )
 from config import SERVER_DATA, ENDPOINT_DATA, initialize
 
-if __name__ == "__main__":
+def main():
     args = initialize()
 
     raw_dump_filepath = extract_dump(**vars(args))
@@ -26,3 +26,6 @@ if __name__ == "__main__":
     #     enable_network()
 
     # clean_dump()
+
+if __name__ == "__main__":
+    main()

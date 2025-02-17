@@ -1,38 +1,90 @@
 # MalMemSO / device
 
-- Extraction of a memory dump file (.raw)
-- Compression of the raw file (.zip)
-- Sending the compressed file to the fog server
-- To be implemented.
+## Overview
 
-Operating systems supported: Windows 10.
+MalMemSO is a tool for extracting and processing memory dump files on Windows 10 devices. It automates the extraction, compression, and transmission of memory dumps for further analysis.
 
-## instructions
+## Requirements
 
-Edit the content of `config.example.ini` with the fog server settings and rename it to `config.ini`.
+- **Operating System:** Windows 10
+- **Dependencies:** [Python 3](https://www.python.org/downloads/windows/)
 
-Run `python src/main.py -t <extraction_tool> -a <system_architecture>`.
+## Installation
 
-- Extraction tool options: "winpmem" (default), "dumpit".
-- System architecture options: "32bit", "64bit" (default).
-- Run `python src/main.py -h` for help.
+### For Users
 
-## modules (in order of execution)
+1. **Download** the repository and save it in your `Downloads` folder.
+2. **Unzip** the downloaded folder.
+3. **Open an elevated terminal:**
+   - Right-click the Windows Start button.
+   - Select **"Terminal (Admin)"** or **"Windows PowerShell (Admin)"**.
+4. **Run the setup script:**
 
-### dump_extractor
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File ".\Downloads\MalMemSO_device\setup.ps1"
+   ```
 
-Based on the specified extraction tool and system architecture (WinPmem and 64bit, by default, respectively), extracts a .raw memory dump file and save it on the outputs/raw/ directory.
+5. **To uninstall**, run:
 
-### file_compressor
+   ```powershell
+   Unregister-ScheduledTask -TaskName "RunMalMemSO" -Confirm:$false
+   ```
 
-Compresses the .raw file to a .zip file and save it on the outputs/zip/ directory.
+### For Developers
 
-### file_sender
+1. **Configure the application:**
+   - Edit `config.example.ini` with the fog server settings and rename it to `config.ini`.
+2. **Run the program:**
 
-Connects with the fog server and sends the extracted dump .zip file to be analyzed.
+   ```powershell
+   python src/main.py -t <extraction_tool> -a <system_architecture>
+   ```
 
-### response_getter
-### disable_network
-### malware_remover
-### network_enabler
-### dump_cleaner
+   **Options:**
+   - Extraction tools: `winpmem` (default), `dumpit`.
+   - System architectures: `32bit`, `64bit` (default).
+   - For help, run:
+
+     ```powershell
+     python src/main.py -h
+     ```
+
+## Modules (Execution Flow)
+
+### 1. **dump_extractor**
+
+- Extracts a `.raw` memory dump file based on the selected tool (`WinPmem` by default) and system architecture.
+- Saves the file in `outputs/raw/`.
+
+### 2. **file_compressor**
+
+- Compresses the `.raw` file into a `.zip` archive.
+- Saves the compressed file in `outputs/zip/`.
+
+### 3. **file_sender**
+
+- Connects to the fog server and uploads the compressed dump file for analysis.
+
+### 4. **response_getter** *(To be implemented)*
+
+- Retrieves analysis results from the fog server.
+
+### 5. **disable_network** *(To be implemented)*
+
+- Disables network connectivity for security reasons during analysis.
+
+### 6. **malware_remover** *(To be implemented)*
+
+- Identifies and removes detected malware threats.
+
+### 7. **network_enabler** *(To be implemented)*
+
+- Re-enables network connectivity after analysis.
+
+### 8. **dump_cleaner** *(To be implemented)*
+
+- Deletes temporary files and cleans up the system.
+
+## License
+
+This project is under development. Licensing details will be provided upon release.
