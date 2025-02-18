@@ -1,19 +1,31 @@
 from logging import info, error
 from os import listdir, stat
-from os.path import join, exists
+from os.path import join, exists, getsize
 from subprocess import Popen, PIPE, CalledProcessError
 
-from utils import BIN_DIR, RAW_DIR, create_dir, delete_file
+from ..config import (
+    BIN_DIR,
+    RAW_DIR,
+    PARSER_ARCH_OPTIONS,
+    PARSER_ARCH_MAPPING,
+    PARSER_ARCH_DEFAULT,
+    PARSER_TOOL_OPTIONS,
+    PARSER_TOOL_DEFAULT,
+    TOOL_COMMANDS,
+)
+from ..utils import delete_file_if_exists
 
 
-def extract_dump(tool: str, arch: str) -> str:
+def extract_dump(
+    tool: str = PARSER_TOOL_DEFAULT, arch: str = PARSER_ARCH_DEFAULT
+) -> str:
     """Extracts the memory dump file using the specified tool and
     architecture.
 
-    Validates the tool and architecture provided, gets the path to the
-    tool executable, creates the output path for the memory dump file,
-    and executes the tool command. If an error occurs during memory
-    dump extraction, the output file is deleted.
+    Validates the values provided and generates the required paths to
+    execute the tool command. If an error occurs during memory dump
+    extraction, the output file is deleted. If no tool or architecture
+    is provided, the default values are used.
 
     Args:
         tool (str): Tool used to extract the memory dump file.
@@ -23,18 +35,16 @@ def extract_dump(tool: str, arch: str) -> str:
         str: Path to the memory dump file.
 
     Raises:
-        ValueError: If the tool or architecture is not provided or
-        invalid.
-        PermissionError: If the raw output directory cannot be created.
         Exception: If an error occurs during memory dump extraction.
     """
 
     info("Running memory dump extraction.")
 
-    formatted_arch = _validate_extract_dump_args(tool, arch)
+    _validate_extract_dump_args(tool, arch)
+    formatted_arch = PARSER_ARCH_MAPPING[arch]
     tool_path = join(BIN_DIR, f"{tool}_{formatted_arch}.exe")
-    output_path = _get_output_path(tool, formatted_arch)
-    command = _get_tool_command(tool, tool_path, output_path)
+    output_path = _generate_output_path(tool, formatted_arch)
+    command = TOOL_COMMANDS[tool](tool_path, output_path)
     extraction_error = False
 
     info(f"Extracting memory dump using {tool.capitalize()} tool.")
@@ -59,12 +69,15 @@ def extract_dump(tool: str, arch: str) -> str:
     else:
         if stderr or _is_dump_empty(output_path) or (not stderr and not stdout):
             error_message = "An error occurred during memory dump extraction."
+            if stderr:
+                error_message += f" Error message: {stderr}."
             error(error_message)
             extraction_error = True
+    finally:
         process.terminate()
 
     if extraction_error:
-        delete_file(output_path)
+        delete_file_if_exists(output_path)
         raise Exception(error_message)
 
     info(f"Output message: {stdout}.")
@@ -73,29 +86,23 @@ def extract_dump(tool: str, arch: str) -> str:
     return output_path
 
 
-def _validate_extract_dump_args(tool: str, arch: str) -> str:
+def _validate_extract_dump_args(tool: str, arch: str) -> None:
     """Validates the arguments for the extract_dump function.
 
-    Checks if the tool and architecture are provided and valid. The
-    architecture is formatted as "x86" or "x64" based on the provided
-    architecture. Returns the formatted architecture.
+    Checks if the tool and architecture are valid.
 
     Args:
         tool (str): Tool used to extract the memory dump file.
         arch (str): Architecture of the target system.
 
-    Returns:
-        str: Formatted architecture.
-
     Raises:
-        ValueError: If the tool or architecture is not provided or
-        invalid.
+        ValueError: If the tool or architecture is invalid.
     """
 
     info("Validating tool and arch provided for memory dump extraction.")
 
     if not tool or not arch:
-        error_message = "Tool and architecture must be provided."
+        error_message = "Tool and architecture cannot be empty."
         error(error_message)
         raise ValueError(error_message)
 
@@ -104,96 +111,52 @@ def _validate_extract_dump_args(tool: str, arch: str) -> str:
         error(error_message)
         raise ValueError(error_message)
 
+    if tool not in PARSER_TOOL_OPTIONS:
+        error_message = f"Tool not supported: {tool}."
+        error(error_message)
+        raise ValueError(error_message)
+
     info("Tool is valid.")
 
-    if arch == "32bit":
-        formatted_arch = "x86"
-    elif arch == "64bit":
-        formatted_arch = "x64"
-    else:
+    if arch not in PARSER_ARCH_OPTIONS:
         error_message = f"Architecture not supported: {arch}."
         error(error_message)
         raise ValueError(error_message)
 
     info("Arch is valid.")
 
-    return formatted_arch
 
+def _generate_output_path(tool: str, arch: str) -> str:
+    """Generates the output path for the memory dump file.
 
-def _get_output_path(tool: str, arch: str) -> str:
-    """Gets the output path for the memory dump file.
-
-    Creates the raw output directory if it does not exist, gets the
-    next available number for the memory dump file, and returns the
-    output path. The output path is formatted as
-    "dump_<tool>_<arch>_<number>.raw". The number is incremented by 1
-    for each memory dump file existing in the directory.
+    The output path is formatted as "dump_<tool>_<arch>_<number>.raw".
+    This function gets the next available number for the memory dump
+    file, and returns the output path.
 
     Args:
         tool (str): Tool used to extract the memory dump file.
         arch (str): Architecture of the target system.
 
     Returns:
-        str: Path to the memory dump file.
+        str: The path generated for the memory dump file.
 
     Raises:
-        PermissionError: If the raw output directory cannot be created.
+        FileNotFoundError: If the raw output directory does not exist.
     """
 
     if not exists(RAW_DIR):
-        try:
-            create_dir(RAW_DIR)
-            info("Raw output directory created.")
-        except:
-            error_message = "Failed to create raw output directory."
-            error(error_message)
-            raise PermissionError(error_message)
+        error_message = "Raw output directory does not exist."
+        error(error_message)
+        raise FileNotFoundError(error_message)
 
-    info("Getting output path for memory dump file.")
+    info("Generating output path for memory dump file.")
 
     files = listdir(RAW_DIR)
-    files = [f for f in files if f.startswith(f"dump_{tool}_{arch}_")]
-    numbers = [int(f.split("_")[-1].split(".")[0]) for f in files]
-    number = max(numbers) + 1 if numbers else 1
+    files = [file for file in files if file.startswith(f"dump_{tool}_{arch}_")]
+    numbers = [int(file.split("_")[-1].split(".")[0]) for file in files]
+    next_number = max(numbers) + 1 if numbers else 1
 
-    return join(RAW_DIR, f"dump_{tool}_{arch}_{number}.raw")
-
-
-def _get_tool_command(tool: str, tool_path: str, output_path: str) -> list:
-    """Gets the command to execute the memory dump tool.
-
-    Checks if the tool is supported and returns the command to execute
-    the tool.
-
-    Args:
-        tool (str): Tool used to extract the memory dump file.
-        tool_path (str): Path to the tool executable.
-        output_path (str): Path to the memory dump file.
-
-    Returns:
-        list: Command to execute the memory dump tool.
-
-    Raises:
-        ValueError: If the tool is not supported.
-
-    Supported tools:
-        WinPmem
-        DumpIt for Windows
-    """
-
-    info(f"Getting command for {tool.capitalize()} tool.")
-
-    COMMANDS = {
-        "winpmem": [tool_path, output_path],
-        "dumpit": [tool_path, "/OUTPUT", output_path, "/Q"],
-    }
-
-    if tool not in COMMANDS:
-        error_message = f"Tool not supported: {tool}."
-        error(error_message)
-        raise ValueError(error_message)
-
-    return COMMANDS[tool]
+    return join(RAW_DIR, f"dump_{tool}_{arch}_{next_number}.raw")
 
 
 def _is_dump_empty(filepath: str) -> bool:
@@ -212,7 +175,7 @@ def _is_dump_empty(filepath: str) -> bool:
     """
 
     if exists(filepath):
-        file_size = stat(filepath).st_size
+        file_size = getsize(filepath)
         return not file_size
 
     return True

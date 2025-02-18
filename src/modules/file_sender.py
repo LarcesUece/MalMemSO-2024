@@ -3,7 +3,7 @@ from http.client import HTTPException
 from logging import error, info
 from os.path import basename
 
-from utils import get_connection, get_token, validate_endpoint
+from ..utils import get_connection, get_token, validate_endpoint
 
 
 def send_file(

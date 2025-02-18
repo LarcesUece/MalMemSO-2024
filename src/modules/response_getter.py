@@ -4,7 +4,7 @@ from json import loads
 from logging import error, info
 from time import sleep
 
-from utils import get_connection, get_token, validate_endpoint, decode_response
+from ..utils import get_connection, get_token, validate_endpoint, decode_response
 
 
 def get_response(

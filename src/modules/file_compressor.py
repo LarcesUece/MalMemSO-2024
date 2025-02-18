@@ -3,7 +3,7 @@ from os.path import basename, join, exists
 from time import time
 from zipfile import ZipFile, ZIP_DEFLATED
 
-from utils import ZIP_DIR
+from ..config import ZIP_DIR
 
 
 def compress_file(filepath: str) -> str:

@@ -1,6 +1,6 @@
 from argparse import Namespace
 
-from modules import (
+from .modules import (
     extract_dump,
     compress_file,
     send_file,
@@ -10,7 +10,7 @@ from modules import (
     enable_network,
     clean_dump,
 )
-from config import (
+from .config import (
     SERVER_DATA,
     BIN_DIR,
     LOGS_DIR,
@@ -18,9 +18,9 @@ from config import (
     ZIP_DIR,
     PARSER_DATA,
     LOGGING_DATA,
-    ENDPOINT_DATA,
+    # ENDPOINT_DATA,
 )
-from utils import create_dir, setup_logging, setup_argparser
+from .utils import create_dir, setup_logging, setup_argparser
 
 
 def initialize() -> Namespace:

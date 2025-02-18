@@ -1,6 +1,6 @@
 import ctypes
 
-from logging import error
+from logging import error, info
 from os import makedirs, remove
 from os.path import exists
 from platform import system, architecture
@@ -64,12 +64,11 @@ def create_dir(path: str) -> None:
             raise PermissionError(error_message)
 
 
-def delete_file(filepath: str) -> None:
-    """Delete a file if it exists."""
-
+def delete_file_if_exists(filepath: str) -> None:
     if exists(filepath):
         try:
             remove(filepath)
+            info(f"Deleted file at {filepath}.")
         except:
             error_message = f"Failed to delete file at {filepath}."
             error(error_message)

@@ -1,4 +1,4 @@
-from utils import (
+from ..utils import (
     load_config,
     validate_config_data,
 )
@@ -12,15 +12,19 @@ SERVER_DATA = config["server"]
 validate_config_data(SERVER_DATA, _REQUIRED_SERVER_KEYS)
 
 # Parser config data
-_PARSER_TOOL_OPTIONS = ["winpmem", "dumpit"]
-_PARSER_TOOL_DEFAULT = "winpmem"
-_PARSER_ARCH_OPTIONS = ["32bit", "64bit"]
-_PARSER_ARCH_DEFAULT = "64bit"
+PARSER_TOOL_OPTIONS = ["winpmem", "dumpit"]
+PARSER_TOOL_DEFAULT = "winpmem"
+PARSER_ARCH_OPTIONS = ["32bit", "64bit"]
+PARSER_ARCH_MAPPING = {
+    "32bit": "x86",
+    "64bit": "x64",
+}
+PARSER_ARCH_DEFAULT = "64bit"
 PARSER_DATA = {
-    "tool_default": _PARSER_TOOL_DEFAULT,
-    "tool_options": _PARSER_TOOL_OPTIONS,
-    "arch_default": _PARSER_ARCH_DEFAULT,
-    "arch_options": _PARSER_ARCH_OPTIONS,
+    "tool_default": PARSER_TOOL_DEFAULT,
+    "tool_options": PARSER_TOOL_OPTIONS,
+    "arch_default": PARSER_ARCH_DEFAULT,
+    "arch_options": PARSER_ARCH_OPTIONS,
 }
 
 # Logging config data
@@ -32,4 +36,9 @@ LOGGING_DATA = {
     "level": _LOGGING_LEVEL,
     "filename": _LOGGING_FILENAME,
     "format": _LOGGING_FORMAT,
+}
+
+TOOL_COMMANDS = {
+    "dumpit": lambda tool_path, output_path: [tool_path, "/OUTPUT", output_path, "/Q"],
+    "winpmem": lambda tool_path, output_path: [tool_path, output_path],
 }

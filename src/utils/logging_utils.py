@@ -12,7 +12,7 @@ from logging import (
 )
 from os.path import join
 
-from ..config import LOGS_DIR
+from ..config.paths import LOGS_DIR
 from .utils import create_dir
 
 
