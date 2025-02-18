@@ -1,24 +1,15 @@
-from argparse import Namespace
 from utils import (
-    create_dir,
     load_config,
-    setup_argparser,
-    setup_logging,
-    validate_endpoint_data,
-    validate_server_data,
-    BIN_PATH,
-    LOGS_PATH,
-    RAW_PATH,
-    ZIP_PATH,
+    validate_config_data,
 )
 
+# Load data from configuration file
 config = load_config()
 
 # Server authentication data
+_REQUIRED_SERVER_KEYS = ["host", "port", "timeout", "endpoint"]
 SERVER_DATA = config["server"]
-validate_server_data(SERVER_DATA)
-ENDPOINT_DATA = config["server.endpoints"]
-validate_endpoint_data(ENDPOINT_DATA)
+validate_config_data(SERVER_DATA, _REQUIRED_SERVER_KEYS)
 
 # Parser config data
 _PARSER_TOOL_OPTIONS = ["winpmem", "dumpit"]
@@ -42,14 +33,3 @@ LOGGING_DATA = {
     "filename": _LOGGING_FILENAME,
     "format": _LOGGING_FORMAT,
 }
-
-
-def initialize() -> Namespace:
-    create_dir(BIN_PATH)
-    create_dir(LOGS_PATH)
-    create_dir(RAW_PATH)
-    create_dir(ZIP_PATH)
-
-    setup_logging(LOGGING_DATA)
-    args = setup_argparser(PARSER_DATA)
-    return args

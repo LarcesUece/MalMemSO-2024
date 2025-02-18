@@ -2,7 +2,4 @@ __pycache__
 *.log
 *.raw
 *.zip
-*.tar.gz
 config.ini
-venv
-libs

@@ -1,4 +1,4 @@
-from time import sleep
+from argparse import Namespace
 
 from modules import (
     extract_dump,
@@ -10,7 +10,29 @@ from modules import (
     enable_network,
     clean_dump,
 )
-from config import SERVER_DATA, ENDPOINT_DATA, initialize
+from config import (
+    SERVER_DATA,
+    BIN_DIR,
+    LOGS_DIR,
+    RAW_DIR,
+    ZIP_DIR,
+    PARSER_DATA,
+    LOGGING_DATA,
+    ENDPOINT_DATA,
+)
+from utils import create_dir, setup_logging, setup_argparser
+
+
+def initialize() -> Namespace:
+    create_dir(BIN_DIR)
+    create_dir(LOGS_DIR)
+    create_dir(RAW_DIR)
+    create_dir(ZIP_DIR)
+
+    setup_logging(LOGGING_DATA)
+    args = setup_argparser(PARSER_DATA)
+    return args
+
 
 def main():
     args = initialize()
@@ -26,6 +48,7 @@ def main():
     #     enable_network()
 
     # clean_dump()
+
 
 if __name__ == "__main__":
     main()

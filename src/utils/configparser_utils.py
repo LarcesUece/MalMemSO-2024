@@ -2,7 +2,7 @@ from configparser import ConfigParser
 from logging import error
 from os.path import exists
 
-from .paths import INI_PATH, INI_EXAMPLE_PATH
+from ..config import INI_PATH, INI_EXAMPLE_PATH
 
 
 def load_config(config_file: str = INI_PATH) -> ConfigParser:
@@ -24,37 +24,37 @@ def load_config(config_file: str = INI_PATH) -> ConfigParser:
     return config
 
 
-def validate_server_data(data: dict) -> None:
+def validate_config_data(data: dict, required_keys: list) -> None:
     if not data:
-        error_message = "Server data is missing."
+        error_message = "Config data is missing."
         error(error_message)
         raise ValueError(error_message)
 
-    for key in ["host", "port", "username", "password", "timeout"]:
+    for key in required_keys:
         if key not in data:
-            error_message = f"Server data is missing key: {key}"
+            error_message = f"Config data is missing key: {key}"
             error(error_message)
             raise ValueError(error_message)
 
         if not data[key]:
-            error_message = f"Server data key is empty: {key}."
+            error_message = f"Config data key is empty: {key}."
             error(error_message)
             raise ValueError(error_message)
 
 
-def validate_endpoint_data(data: dict) -> None:
-    if not data:
-        error_message = "Endpoint data is missing."
-        error(error_message)
-        raise ValueError(error_message)
+# def validate_endpoint_data(data: dict) -> None:
+#     if not data:
+#         error_message = "Endpoint data is missing."
+#         error(error_message)
+#         raise ValueError(error_message)
 
-    for key in ["login", "upload", "response"]:
-        if key not in data:
-            error_message = f"Endpoint data is missing key: {key}"
-            error(error_message)
-            raise ValueError(error_message)
+#     for key in ["login", "upload", "response"]:
+#         if key not in data:
+#             error_message = f"Endpoint data is missing key: {key}"
+#             error(error_message)
+#             raise ValueError(error_message)
 
-        if not data[key]:
-            error_message = f"Endpoint data key is empty: {key}."
-            error(error_message)
-            raise ValueError(error_message)
+#         if not data[key]:
+#             error_message = f"Endpoint data key is empty: {key}."
+#             error(error_message)
+#             raise ValueError(error_message)

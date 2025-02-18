@@ -12,7 +12,7 @@ from logging import (
 )
 from os.path import join
 
-from .paths import LOGS_PATH
+from ..config import LOGS_DIR
 from .utils import create_dir
 
 
@@ -20,9 +20,9 @@ def setup_logging(data: dict) -> None:
     """Setup logging configuration for the caller module."""
 
     _validate_data(data)
-    create_dir(LOGS_PATH)
+    create_dir(LOGS_DIR)
 
-    filepath = join(LOGS_PATH, data["filename"] + ".log")
+    filepath = join(LOGS_DIR, data["filename"] + ".log")
 
     basicConfig(
         filename=filepath,

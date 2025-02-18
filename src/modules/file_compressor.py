@@ -3,7 +3,7 @@ from os.path import basename, join, exists
 from time import time
 from zipfile import ZipFile, ZIP_DEFLATED
 
-from utils import ZIP_PATH
+from utils import ZIP_DIR
 
 
 def compress_file(filepath: str) -> str:
@@ -34,7 +34,7 @@ def compress_file(filepath: str) -> str:
     info("Getting output path for compressed file.")
 
     file_name = basename(filepath)
-    zip_filepath = join(ZIP_PATH, file_name + ".zip")
+    zip_filepath = join(ZIP_DIR, file_name + ".zip")
 
     info("Compressing file into ZIP archive.")
 

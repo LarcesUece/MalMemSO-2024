@@ -3,7 +3,7 @@ from os import listdir, stat
 from os.path import join, exists
 from subprocess import Popen, PIPE, CalledProcessError
 
-from utils import BIN_PATH, RAW_PATH, create_dir, delete_file
+from utils import BIN_DIR, RAW_DIR, create_dir, delete_file
 
 
 def extract_dump(tool: str, arch: str) -> str:
@@ -32,7 +32,7 @@ def extract_dump(tool: str, arch: str) -> str:
     info("Running memory dump extraction.")
 
     formatted_arch = _validate_extract_dump_args(tool, arch)
-    tool_path = join(BIN_PATH, f"{tool}_{formatted_arch}.exe")
+    tool_path = join(BIN_DIR, f"{tool}_{formatted_arch}.exe")
     output_path = _get_output_path(tool, formatted_arch)
     command = _get_tool_command(tool, tool_path, output_path)
     extraction_error = False
@@ -140,9 +140,9 @@ def _get_output_path(tool: str, arch: str) -> str:
         PermissionError: If the raw output directory cannot be created.
     """
 
-    if not exists(RAW_PATH):
+    if not exists(RAW_DIR):
         try:
-            create_dir(RAW_PATH)
+            create_dir(RAW_DIR)
             info("Raw output directory created.")
         except:
             error_message = "Failed to create raw output directory."
@@ -151,12 +151,12 @@ def _get_output_path(tool: str, arch: str) -> str:
 
     info("Getting output path for memory dump file.")
 
-    files = listdir(RAW_PATH)
+    files = listdir(RAW_DIR)
     files = [f for f in files if f.startswith(f"dump_{tool}_{arch}_")]
     numbers = [int(f.split("_")[-1].split(".")[0]) for f in files]
     number = max(numbers) + 1 if numbers else 1
 
-    return join(RAW_PATH, f"dump_{tool}_{arch}_{number}.raw")
+    return join(RAW_DIR, f"dump_{tool}_{arch}_{number}.raw")
 
 
 def _get_tool_command(tool: str, tool_path: str, output_path: str) -> list:
