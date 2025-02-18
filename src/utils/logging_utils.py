@@ -1,14 +1,14 @@
 from logging import (
-    basicConfig,
-    error,
-    NOTSET,
+    CRITICAL,
     DEBUG,
-    INFO,
-    WARN,
-    WARNING,
     ERROR,
     FATAL,
-    CRITICAL,
+    INFO,
+    NOTSET,
+    WARN,
+    WARNING,
+    basicConfig,
+    error,
 )
 from os.path import join
 

@@ -1,16 +1,19 @@
-from logging import info, error
-from os import listdir, stat
-from os.path import join, exists, getsize
-from subprocess import Popen, PIPE, CalledProcessError
+"""Module for extracting memory dump files using different tools and
+architectures."""
+
+from logging import error, info
+from os import listdir
+from os.path import exists, getsize, join
+from subprocess import PIPE, Popen, SubprocessError
 
 from ..config import (
     BIN_DIR,
-    RAW_DIR,
-    PARSER_ARCH_OPTIONS,
-    PARSER_ARCH_MAPPING,
     PARSER_ARCH_DEFAULT,
-    PARSER_TOOL_OPTIONS,
+    PARSER_ARCH_MAPPING,
+    PARSER_ARCH_OPTIONS,
     PARSER_TOOL_DEFAULT,
+    PARSER_TOOL_OPTIONS,
+    RAW_DIR,
     TOOL_COMMANDS,
 )
 from ..utils import delete_file_if_exists
@@ -35,7 +38,9 @@ def extract_dump(
         str: Path to the memory dump file.
 
     Raises:
-        Exception: If an error occurs during memory dump extraction.
+        SubprocessError: If an error occurs during memory dump extraction.
+        RuntimeError: If an unexpected error occurs during memory dump
+        extraction.
     """
 
     info("Running memory dump extraction.")
@@ -45,40 +50,36 @@ def extract_dump(
     tool_path = join(BIN_DIR, f"{tool}_{formatted_arch}.exe")
     output_path = _generate_output_path(tool, formatted_arch)
     command = TOOL_COMMANDS[tool](tool_path, output_path)
-    extraction_error = False
 
     info(f"Extracting memory dump using {tool.capitalize()} tool.")
 
     try:
-        process = Popen(
+        with Popen(
             command,
             stdout=PIPE,
             stderr=PIPE,
             text=True,
             encoding="utf-8",
-        )
-        stdout, stderr = process.communicate()
-    except CalledProcessError as e:
-        error_message = f"A subprocess error occurred: {e}."
-        error(error_message)
-        extraction_error = True
-    except Exception as e:
-        error_message = f"An unexpected error occurred: {e}."
-        error(error_message)
-        extraction_error = True
-    else:
+        ) as process:
+            stdout, stderr = process.communicate()
+
         if stderr or _is_dump_empty(output_path) or (not stderr and not stdout):
             error_message = "An error occurred during memory dump extraction."
             if stderr:
                 error_message += f" Error message: {stderr}."
             error(error_message)
-            extraction_error = True
-    finally:
-        process.terminate()
-
-    if extraction_error:
+            delete_file_if_exists(output_path)
+            raise RuntimeError(error_message)
+    except SubprocessError as exc:
+        error_message = f"A subprocess error occurred: {exc}."
+        error(error_message)
         delete_file_if_exists(output_path)
-        raise Exception(error_message)
+        raise SubprocessError(error_message) from exc
+    except Exception as exc:
+        error_message = f"An unexpected error occurred: {exc}."
+        error(error_message)
+        delete_file_if_exists(output_path)
+        raise RuntimeError(error_message) from exc
 
     info(f"Output message: {stdout}.")
     info(f"Memory dump file saved at {output_path}.")

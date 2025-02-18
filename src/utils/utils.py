@@ -1,9 +1,8 @@
 import ctypes
-
 from logging import error, info
 from os import makedirs, remove
 from os.path import exists
-from platform import system, architecture
+from platform import architecture, system
 
 
 def get_os() -> str:
@@ -40,7 +39,7 @@ def is_root() -> bool:
     if os_name == "windows":
         try:
             return ctypes.windll.shell32.IsUserAnAdmin() != 0
-        except:
+        except Exception:
             return False
     elif os_name == "linux":
         from os import getuid
@@ -58,10 +57,10 @@ def create_dir(path: str) -> None:
     if not exists(path):
         try:
             makedirs(path)
-        except:
+        except PermissionError as exc:
             error_message = f"Failed to create directory at {path}."
             error(error_message)
-            raise PermissionError(error_message)
+            raise PermissionError(error_message) from exc
 
 
 def delete_file_if_exists(filepath: str) -> None:
@@ -69,7 +68,7 @@ def delete_file_if_exists(filepath: str) -> None:
         try:
             remove(filepath)
             info(f"Deleted file at {filepath}.")
-        except:
+        except PermissionError as exc:
             error_message = f"Failed to delete file at {filepath}."
             error(error_message)
-            raise PermissionError(error_message)
+            raise PermissionError(error_message) from exc

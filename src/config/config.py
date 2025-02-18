@@ -1,7 +1,4 @@
-from ..utils import (
-    load_config,
-    validate_config_data,
-)
+from ..utils import load_config, validate_config_data
 
 # Load data from configuration file
 config = load_config()

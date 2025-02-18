@@ -1,4 +1,4 @@
-from os.path import dirname, realpath, abspath, join, pardir
+from os.path import abspath, dirname, join, pardir, realpath
 
 # src/config/
 CONFIG_DIR = abspath(dirname(realpath(__file__)))

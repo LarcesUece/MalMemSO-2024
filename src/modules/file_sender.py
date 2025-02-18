@@ -30,13 +30,13 @@ def send_file(
                 raise HTTPException(
                     f"Failed to upload file. Status: {response.status}."
                 )
-    except OSError as e:
+    except OSError as exc:
         error_message = "Failed to access file."
         error(error_message)
-        raise e(error_message)
-    except Exception as e:
+        raise OSError(error_message) from exc
+    except Exception as exc:
         error_message = "An error occurred."
         error(error_message)
-        raise e(error_message)
+        raise RuntimeError(error_message) from exc
 
     return filename

@@ -1,7 +1,7 @@
 from logging import error, info
-from os.path import basename, join, exists
+from os.path import basename, exists, join
 from time import time
-from zipfile import ZipFile, ZIP_DEFLATED
+from zipfile import ZIP_DEFLATED, ZipFile
 
 from ..config import ZIP_DIR
 
@@ -21,7 +21,7 @@ def compress_file(filepath: str) -> str:
 
     Raises:
         FileNotFoundError: If the file does not exist.
-        Exception: If an error occurs while compressing the file.
+        RuntimeError: If an error occurs while compressing the file.
     """
 
     info("Running dump file compression.")
@@ -44,10 +44,10 @@ def compress_file(filepath: str) -> str:
             zipf.write(filepath, arcname=file_name)
         end = time()
         duration = end - start
-    except Exception as e:
-        error_message = f"An error occurred while compressing file: {e}."
+    except Exception as exc:
+        error_message = f"An error occurred while compressing file: {exc}."
         error(error_message)
-        raise Exception(error_message)
+        raise RuntimeError(error_message) from exc
 
     info(f"File compressed successfully in {duration:.2f} seconds.")
     info(f"Compressed file saved at {zip_filepath}.")

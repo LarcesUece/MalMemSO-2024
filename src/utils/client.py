@@ -52,10 +52,10 @@ def get_token(
         connection.request("POST", url=login_endpoint, body=data, headers=headers)
         response = connection.getresponse()
         token = loads(decode_response(response))["access_token"]
-    except Exception as e:
+    except Exception as exc:
         error_message = "Failed to get access token."
         error(error_message)
-        raise e(error_message)
+        raise RuntimeError(error_message) from exc
 
     return token
 

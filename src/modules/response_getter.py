@@ -1,10 +1,10 @@
 from configparser import SectionProxy
-from http.client import ResponseNotReady, CannotSendRequest
+from http.client import CannotSendRequest, ResponseNotReady
 from json import loads
 from logging import error, info
 from time import sleep
 
-from ..utils import get_connection, get_token, validate_endpoint, decode_response
+from ..utils import decode_response, get_connection, get_token, validate_endpoint
 
 
 def get_response(
@@ -38,13 +38,13 @@ def get_response(
             else:
                 error_message = f"Failed to get response. Status: {response.status}."
                 error(error_message)
-        except (ResponseNotReady, CannotSendRequest) as e:
+        except (ResponseNotReady, CannotSendRequest):
             error_message = "Failed to get response."
             error(error_message)
             connection = None
-        except Exception as e:
+        except Exception as exc:
             error_message = "An error occurred while getting response."
             error(error_message)
-            raise e(error_message)
+            raise RuntimeError(error_message) from exc
 
         sleep(retry_interval)
