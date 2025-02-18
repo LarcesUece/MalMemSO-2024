@@ -1,21 +1,19 @@
-"""Module for extracting memory dump files using different tools and
-architectures."""
+"""Module for extracting memory dump files."""
 
 from logging import error, info
 from os import listdir
 from os.path import exists, getsize, join
 from subprocess import PIPE, Popen, SubprocessError
 
-from ..config import (
-    BIN_DIR,
+from ..config.config import (
     PARSER_ARCH_DEFAULT,
     PARSER_ARCH_MAPPING,
     PARSER_ARCH_OPTIONS,
     PARSER_TOOL_DEFAULT,
     PARSER_TOOL_OPTIONS,
-    RAW_DIR,
     TOOL_COMMANDS,
 )
+from ..config.paths import BIN_DIR, RAW_DIR
 from ..utils import delete_file_if_exists
 
 
@@ -51,7 +49,7 @@ def extract_dump(
     output_path = _generate_output_path(tool, formatted_arch)
     command = TOOL_COMMANDS[tool](tool_path, output_path)
 
-    info(f"Extracting memory dump using {tool.capitalize()} tool.")
+    info(f"Extracting memory dump using '{tool.capitalize()}' tool.")
 
     try:
         with Popen(
@@ -75,14 +73,14 @@ def extract_dump(
         error(error_message)
         delete_file_if_exists(output_path)
         raise SubprocessError(error_message) from exc
-    except Exception as exc:
+    except RuntimeError as exc:
         error_message = f"An unexpected error occurred: {exc}."
         error(error_message)
         delete_file_if_exists(output_path)
         raise RuntimeError(error_message) from exc
 
     info(f"Output message: {stdout}.")
-    info(f"Memory dump file saved at {output_path}.")
+    info(f"Memory dump file saved at '{output_path}'.")
 
     return output_path
 

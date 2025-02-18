@@ -3,10 +3,13 @@ from ..utils import load_config, validate_config_data
 # Load data from configuration file
 config = load_config()
 
-# Server authentication data
-_REQUIRED_SERVER_KEYS = ["host", "port", "timeout", "endpoint"]
-SERVER_DATA = config["server"]
-validate_config_data(SERVER_DATA, _REQUIRED_SERVER_KEYS)
+# MalMemSO service connection info
+_REQUIRED_CONFIG_KEYS = ["host", "port", "timeout"]
+_REQUIRED_CONFIG_ENDPOINTS = ["upload", "response"]
+SERVICE_DATA = config["service"]
+ENDPOINT_DATA = config["service.endpoints"]
+validate_config_data(SERVICE_DATA, _REQUIRED_CONFIG_KEYS)
+validate_config_data(ENDPOINT_DATA, _REQUIRED_CONFIG_ENDPOINTS)
 
 # Parser config data
 PARSER_TOOL_OPTIONS = ["winpmem", "dumpit"]

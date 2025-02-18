@@ -1,9 +1,11 @@
+"""Module for compressing files into zip archives."""
+
 from logging import error, info
 from os.path import basename, exists, join
 from time import time
 from zipfile import ZIP_DEFLATED, ZipFile
 
-from ..config import ZIP_DIR
+from ..config.paths import ZIP_DIR
 
 
 def compress_file(filepath: str) -> str:
@@ -40,8 +42,8 @@ def compress_file(filepath: str) -> str:
 
     try:
         start = time()
-        with ZipFile(zip_filepath, "w", ZIP_DEFLATED) as zipf:
-            zipf.write(filepath, arcname=file_name)
+        with ZipFile(zip_filepath, "w", ZIP_DEFLATED) as zip_file:
+            zip_file.write(filename=filepath, arcname=file_name)
         end = time()
         duration = end - start
     except Exception as exc:

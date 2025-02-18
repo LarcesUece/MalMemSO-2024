@@ -1,11 +1,9 @@
 from configparser import SectionProxy
-from http.client import HTTPResponse, HTTPSConnection
-from json import dumps, loads
+from http.client import HTTPConnection, HTTPResponse
 from logging import error
-from ssl import create_default_context
 
 
-def get_connection(server_data: SectionProxy) -> HTTPSConnection:
+def get_connection(server_data: SectionProxy) -> HTTPConnection:
     """Gets the connection to the server.
 
     Args:
@@ -17,47 +15,10 @@ def get_connection(server_data: SectionProxy) -> HTTPSConnection:
 
     host = server_data["host"]
     port = int(server_data["port"])
-    timeout = server_data["timeout"]
-    context = create_default_context()
+    timeout = int(server_data["timeout"])
 
-    connection = HTTPSConnection(host, port, timeout=timeout, context=context)
+    connection = HTTPConnection(host, port, timeout=timeout)
     return connection
-
-
-def get_token(
-    connection: HTTPSConnection, server_data: SectionProxy, endpoint_data: SectionProxy
-) -> str:
-    """Gets the access token from the server.
-
-    Args:
-        connection (HTTPSConnection): The connection to the server.
-        server_data (SectionProxy): The server data.
-        endpoint_data (SectionProxy): The endpoint data.
-
-    Returns:
-        str: The access token.
-
-    Raises:
-        Exception: If it fails to get the access token.
-    """
-
-    username = server_data["username"]
-    password = server_data["password"]
-    data = dumps({"username": username, "password": password})
-
-    headers = {"Content-Type": "application/json"}
-    login_endpoint = validate_endpoint(endpoint_data["login"])
-
-    try:
-        connection.request("POST", url=login_endpoint, body=data, headers=headers)
-        response = connection.getresponse()
-        token = loads(decode_response(response))["access_token"]
-    except Exception as exc:
-        error_message = "Failed to get access token."
-        error(error_message)
-        raise RuntimeError(error_message) from exc
-
-    return token
 
 
 def validate_endpoint(endpoint: str) -> str:
@@ -84,7 +45,9 @@ def validate_endpoint(endpoint: str) -> str:
         raise TypeError("Endpoint must be a string.")
 
     splitted_endpoint = endpoint.split("/")
-    formatted_endpoint = "/" + "/".join([part for part in splitted_endpoint if part])
+    formatted_endpoint = (
+        "/" + "/".join([part for part in splitted_endpoint if part]) + "/"
+    )
 
     return formatted_endpoint
 
