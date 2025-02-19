@@ -1,12 +1,13 @@
-# MalMemSO_device
+# MalMemSO_device setup script
+# Version: 1.0
 # Author: LARCES/UECE
-# Date: 2025-02-17
+# Date: 2025-02-18
 # Description: This script sets up an automated scheduled task to run 
-# the "init.ps1" script every 30 minutes with administrator privileges. 
-# It also copies all necessary program files to a protected directory 
-# in "C:\Program Files\MalMemSO" to prevent accidental deletion. The 
-# task is configured to run in the background without prompting the 
-# user.
+# the "prestart.ps1" script every 30 minutes with administrator 
+# privileges. It also copies all necessary program files to a protected 
+# directory in "C:\Program Files\MalMemSO" to prevent accidental 
+# deletion. The task is configured to run in the background without 
+# prompting the user.
 
 $admin = [Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()
 if (-not $admin.IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
@@ -16,8 +17,8 @@ if (-not $admin.IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"
 
 $taskName = "RunMalMemSO"
 $programFolder = "C:\Program Files\MalMemSO"
-$scriptPath = Join-Path -Path $PSScriptRoot -ChildPath "init.ps1"
-$protectedScriptPath = Join-Path -Path $programFolder -ChildPath "init.ps1"
+$scriptPath = Join-Path -Path $PSScriptRoot -ChildPath "prestart.ps1"
+$protectedScriptPath = Join-Path -Path $programFolder -ChildPath "prestart.ps1"
 
 try {
     if (-not (Test-Path -Path $programFolder)) {
