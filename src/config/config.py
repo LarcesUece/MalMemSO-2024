@@ -1,4 +1,6 @@
-from ..utils import load_config, validate_config_data
+from logging import CRITICAL, DEBUG, ERROR, FATAL, INFO, NOTSET, WARN, WARNING
+
+from ..config.configparser import load_config, validate_config_data
 
 # Load data from configuration file
 config = load_config()
@@ -29,14 +31,19 @@ PARSER_DATA = {
 
 # Logging config data
 # Logging level options: notset, debug, info, warn, warning, error, fatal, critical
-_LOGGING_LEVEL = "info"
-_LOGGING_FILENAME = "device"
-_LOGGING_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
-LOGGING_DATA = {
-    "level": _LOGGING_LEVEL,
-    "filename": _LOGGING_FILENAME,
-    "format": _LOGGING_FORMAT,
+LOGGING_LEVEL = "info"
+LOGGING_LEVEL_MAPPING = {
+    "notset": NOTSET,
+    "debug": DEBUG,
+    "info": INFO,
+    "warn": WARN,
+    "warning": WARNING,
+    "error": ERROR,
+    "fatal": FATAL,
+    "critical": CRITICAL,
 }
+LOGGING_FILENAME = "device"
+LOGGING_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
 
 TOOL_COMMANDS = {
     "dumpit": lambda tool_path, output_path: [tool_path, "/OUTPUT", output_path, "/Q"],

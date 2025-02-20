@@ -5,16 +5,16 @@ from os.path import exists
 from ..config.paths import INI_PATH
 
 
-def load_config(config_filepath: str = INI_PATH) -> ConfigParser:
+def load_config() -> ConfigParser:
     """Load a configuration file and return a ConfigParser object."""
 
-    if not exists(config_filepath):
-        error_message = f"INI file not found at '{config_filepath}'."
+    if not exists(INI_PATH):
+        error_message = f"INI file not found at '{INI_PATH}'."
         error(error_message)
         raise FileNotFoundError(error_message)
 
     config = ConfigParser()
-    config.read(config_filepath)
+    config.read(INI_PATH)
     return config
 
 

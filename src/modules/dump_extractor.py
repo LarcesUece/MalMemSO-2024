@@ -14,7 +14,7 @@ from ..config.config import (
     TOOL_COMMANDS,
 )
 from ..config.paths import BIN_DIR, RAW_DIR
-from ..utils import delete_file_if_exists
+from ..utils.utils import delete_file_if_exists
 
 
 def extract_dump(

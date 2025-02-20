@@ -1,15 +1,16 @@
-from configparser import SectionProxy
 from http.client import HTTPException
 from logging import error, info
 from os.path import basename
 from uuid import uuid4
 
-from ..utils import get_connection, validate_endpoint
+from ..config.config import ENDPOINT_DATA, SERVICE_DATA
+from ..utils.client import get_connection, validate_endpoint
 
 
-def send_file(
-    filepath: str, server_data: SectionProxy, endpoint_data: SectionProxy
-) -> str:
+def send_file(filepath: str) -> str:
+
+    server_data = SERVICE_DATA
+    endpoint_data = ENDPOINT_DATA
 
     info("Starting file upload to service.")
 
