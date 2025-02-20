@@ -2,7 +2,7 @@ import ctypes
 from logging import error, info
 from os import makedirs, remove
 from os.path import exists
-from platform import architecture, system
+from platform import architecture, release, system
 
 
 def get_os() -> str:
@@ -72,3 +72,15 @@ def delete_file_if_exists(filepath: str) -> None:
             error_message = f"Failed to delete file at {filepath}."
             error(error_message)
             raise PermissionError(error_message) from exc
+
+
+def check_supported_os() -> None:
+    os_name = system()
+    os_release = release()
+
+    if not os_name == "Windows" and not os_release == "10":
+        error_message = (
+            f"Unsupported OS: {os_name} {os_release}. This program requires Windows 10."
+        )
+        error(error_message)
+        raise EnvironmentError(error_message)

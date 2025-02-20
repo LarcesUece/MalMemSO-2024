@@ -3,6 +3,8 @@
 from logging import error, info
 from os import listdir
 from os.path import exists, getsize, join
+from re import MULTILINE
+from re import compile as re_compile
 from subprocess import PIPE, Popen, SubprocessError
 
 from ..config.config import (
@@ -48,36 +50,35 @@ def extract_dump(
     tool_path = join(BIN_DIR, f"{tool}_{formatted_arch}.exe")
     output_path = _generate_output_path(tool, formatted_arch)
     command = TOOL_COMMANDS[tool](tool_path, output_path)
+    error_message = None
 
     info(f"Extracting memory dump using '{tool.capitalize()}' tool.")
 
     try:
-        with Popen(
-            command,
-            stdout=PIPE,
-            stderr=PIPE,
-            text=True,
-            encoding="utf-8",
-        ) as process:
+        with Popen(command, stdout=PIPE, stderr=PIPE, text=True) as process:
             stdout, stderr = process.communicate()
-
-        if stderr or _is_dump_empty(output_path) or (not stderr and not stdout):
-            error_message = "An error occurred during memory dump extraction."
-            if stderr:
-                error_message += f" Error message: {stderr}."
-            error(error_message)
-            delete_file_if_exists(output_path)
-            raise RuntimeError(error_message)
     except SubprocessError as exc:
-        error_message = f"A subprocess error occurred: {exc}."
+        error_message = f"Error occurred during memory dump extraction: {exc}."
         error(error_message)
-        delete_file_if_exists(output_path)
         raise SubprocessError(error_message) from exc
-    except RuntimeError as exc:
-        error_message = f"An unexpected error occurred: {exc}."
+
+    if stderr:
+        error_message = stderr
+    elif _is_dump_empty(output_path):
+        error_message = "Memory dump file is empty."
+    elif not stderr and not stdout:
+        error_message = "No output message received from memory dump extraction."
+    elif not _is_successful_stdout(stdout, tool):
+        error_message = _extract_error_message(stdout, tool)
+        if error_message is None:
+            error_message = "Memory dump extraction was not successful."
+
+    if error_message:
         error(error_message)
+        error("Stdout: %s", stdout)
+        error("Stderr: %s", stderr)
         delete_file_if_exists(output_path)
-        raise RuntimeError(error_message) from exc
+        raise RuntimeError(error_message)
 
     info(f"Output message: {stdout}.")
     info(f"Memory dump file saved at '{output_path}'.")
@@ -178,3 +179,29 @@ def _is_dump_empty(filepath: str) -> bool:
         return not file_size
 
     return True
+
+
+def _extract_error_message(stdout: str, tool: str) -> str | None:
+    if tool == "dumpit":
+        error_pattern = re_compile(r"^(?:error|Error|ERROR):\s*(.+)", MULTILINE)
+    elif tool == "winpmem":
+        error_pattern = re_compile(r"^[ \t]*(Failed.*)", MULTILINE)
+    else:
+        return None
+
+    match = error_pattern.search(stdout)
+    if match:
+        return match.group(1).strip()
+
+    return None
+
+
+def _is_successful_stdout(stdout: str, tool: str) -> bool:
+    if tool == "dumpit":
+        pattern = re_compile(r"^[ \t]*Acquisition finished at:.*", MULTILINE)
+        return bool(pattern.search(stdout))
+
+    if tool == "winpmem":
+        return not "Failed" in stdout
+
+    return False
