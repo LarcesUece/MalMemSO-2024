@@ -11,7 +11,6 @@ Functions:
 from argparse import Namespace
 
 from .config.argparser import setup_argparser
-from .config.config import PARSER_DATA
 from .config.logging import setup_logging
 from .utils.utils import check_supported_os
 
@@ -25,7 +24,7 @@ def initialize() -> Namespace:
         argparse.Namespace: Parsed command-line arguments.
     """
 
-    check_supported_os()
     setup_logging()
-    args = setup_argparser(PARSER_DATA)
+    check_supported_os()
+    args = setup_argparser()
     return args

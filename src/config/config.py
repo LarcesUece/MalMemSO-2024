@@ -22,12 +22,6 @@ PARSER_ARCH_MAPPING = {
     "64bit": "x64",
 }
 PARSER_ARCH_DEFAULT = "64bit"
-PARSER_DATA = {
-    "tool_default": PARSER_TOOL_DEFAULT,
-    "tool_options": PARSER_TOOL_OPTIONS,
-    "arch_default": PARSER_ARCH_DEFAULT,
-    "arch_options": PARSER_ARCH_OPTIONS,
-}
 
 # Logging config data
 # Logging level options: notset, debug, info, warn, warning, error, fatal, critical
