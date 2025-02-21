@@ -1,31 +1,52 @@
-from configparser import SectionProxy
+"""
+HTTP Client Utilities
+
+This module provides utility functions to handle HTTP client 
+operations, including establishing a connection, validating and 
+formatting endpoints and decoding HTTP responses.
+
+Functions:
+    - get_connection(): Establishes and returns an HTTP connection to 
+        the server using the provided service data.
+    - validate_endpoint(endpoint): Validates and formats the given 
+        endpoint by ensuring it is a non-empty string and with all the 
+        trailing slashes necessary.
+    - decode_response(response): Decodes the provided HTTP response, 
+        ensuring it is an instance of HTTPResponse and not empty.
+"""
+
 from http.client import HTTPConnection, HTTPResponse
-from logging import error
+from logging import error, info
+
+from ..config.config import SERVICE_DATA
 
 
-def get_connection(server_data: SectionProxy) -> HTTPConnection:
-    """Gets the connection to the server.
+def get_connection() -> HTTPConnection:
+    """Establishes and returns a connection to the server.
 
-    Args:
-        server_data (SectionProxy): The server data.
+    Uses the server data (host, port, timeout) from the configuration to
+    establish an HTTP connection.
 
     Returns:
-        HTTPSConnection: The connection to the server.
+        http.client.HTTPConnection: The connection to the server.
     """
 
-    host = server_data["host"]
-    port = int(server_data["port"])
-    timeout = int(server_data["timeout"])
+    host = SERVICE_DATA["host"]
+    port = int(SERVICE_DATA["port"])
+    timeout = int(SERVICE_DATA["timeout"])
 
     connection = HTTPConnection(host, port, timeout=timeout)
+
+    info("Connection created.")
+
     return connection
 
 
 def validate_endpoint(endpoint: str) -> str:
-    """Validates and formats a endpoint.
+    """Validates and formats the given endpoint.
 
-    Checks if the endpoint is empty and a string and formats it by
-    removing any trailing slashes.
+    Ensures the endpoint is a non-empty string and formats it ensuring
+    it has all the trailing slashes necessary.
 
     Args:
         endpoint (str): The endpoint to validate and format.
@@ -39,40 +60,49 @@ def validate_endpoint(endpoint: str) -> str:
     """
 
     if not endpoint:
-        raise ValueError("Endpoint cannot be empty.")
+        error_message = "Endpoint cannot be empty."
+        error(error_message)
+        raise ValueError(error_message)
 
     if not isinstance(endpoint, str):
-        raise TypeError("Endpoint must be a string.")
+        error_message = "Endpoint must be a string."
+        error(error_message)
+        raise TypeError(error_message)
 
     splitted_endpoint = endpoint.split("/")
     formatted_endpoint = (
         "/" + "/".join([part for part in splitted_endpoint if part]) + "/"
     )
 
+    info("Endpoint validated and formatted.")
+
     return formatted_endpoint
 
 
 def decode_response(response: HTTPResponse) -> str:
-    """Decodes a response.
+    """Decodes the HTTP response.
 
-    Checks if the response is empty and an instance of HTTPResponse
-    and decodes it.
+    Reads and decodes the response content.
 
     Args:
-        response (HTTPResponse): The response to decode.
+        response (http.client.HTTPResponse): The response to decode.
 
     Returns:
-        str: The decoded response.
+        str: The decoded response content.
 
     Raises:
         ValueError: If the response is empty.
-        TypeError: If the response is not a HTTPResponse.
+        TypeError: If the response is not an instance of HTTPResponse.
     """
 
     if not response:
-        raise ValueError("Response cannot be empty.")
+        error_message = "Response cannot be empty."
+        error(error_message)
+        raise ValueError(error_message)
 
     if not isinstance(response, HTTPResponse):
-        raise TypeError("Response must be an instance of http.client.HTTPResponse.")
+        error_message = "Response must be an instance of http.client.HTTPResponse."
+        error(error_message)
+        raise TypeError(error_message)
 
     return response.read().decode()
