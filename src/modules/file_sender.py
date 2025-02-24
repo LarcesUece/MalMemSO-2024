@@ -58,7 +58,7 @@ def send_file(filepath: str) -> str:
             connection.request("POST", url=upload_endpoint, body=body, headers=headers)
             response = connection.getresponse()
 
-            if not response.status in [200, 201]:
+            if response.status not in [200, 201]:
                 raise HTTPException(
                     f"Failed to upload file. Status: {response.status}."
                 )

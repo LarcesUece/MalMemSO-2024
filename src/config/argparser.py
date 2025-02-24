@@ -91,12 +91,12 @@ def _validate_parser_config() -> None:
         error(error_message)
         raise TypeError(error_message)
 
-    if not PARSER_TOOL_DEFAULT in PARSER_TOOL_OPTIONS:
+    if PARSER_TOOL_DEFAULT not in PARSER_TOOL_OPTIONS:
         error_message = "Invalid default tool provided."
         error(error_message)
         raise ValueError(error_message)
 
-    if not PARSER_ARCH_DEFAULT in PARSER_ARCH_OPTIONS:
+    if PARSER_ARCH_DEFAULT not in PARSER_ARCH_OPTIONS:
         error_message = "Invalid default architecture provided."
         error(error_message)
         raise ValueError(error_message)

@@ -48,7 +48,7 @@ def validate_config_data(data: dict, required_keys: list) -> None:
         raise ValueError(error_message)
 
     for key in required_keys:
-        if not key in data:
+        if key not in data:
             error_message = f"Config data is missing key: {key}"
             error(error_message)
             raise ValueError(error_message)

@@ -110,19 +110,19 @@ def _validate_extract_dump_args(tool: str, arch: str) -> None:
         error(error_message)
         raise ValueError(error_message)
 
-    if not tool in PARSER_TOOL_OPTIONS:
+    if tool not in PARSER_TOOL_OPTIONS:
         error_message = f"Tool not supported: {tool}."
         error(error_message)
         raise ValueError(error_message)
 
-    if not tool in TOOL_COMMANDS:
+    if tool not in TOOL_COMMANDS:
         error_message = f"Tool command not found: {tool}."
         error(error_message)
         raise ValueError(error_message)
 
     info("Tool is valid.")
 
-    if not arch in PARSER_ARCH_OPTIONS:
+    if arch not in PARSER_ARCH_OPTIONS:
         error_message = f"Architecture not supported: {arch}."
         error(error_message)
         raise ValueError(error_message)
@@ -184,7 +184,7 @@ def _extract_error_message(stdout: str, tool: str) -> str | None:
         str | None: Extracted error message or None if not found.
     """
 
-    if not tool in PARSER_TOOL_OPTIONS:
+    if tool not in PARSER_TOOL_OPTIONS:
         return None
 
     error_patterns = {
@@ -212,6 +212,6 @@ def _is_successful_stdout(stdout: str, tool: str) -> bool:
         return bool(pattern.search(stdout))
 
     if tool == "winpmem":
-        return not "Failed" in stdout
+        return "Failed" not in stdout
 
     return False

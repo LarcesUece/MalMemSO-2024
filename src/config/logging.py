@@ -54,6 +54,6 @@ def _validate_logging_config() -> None:
         error_message = "Logging level must be a string."
         raise TypeError(error_message)
 
-    if not LOGGING_LEVEL in LOGGING_LEVEL_MAPPING:
+    if LOGGING_LEVEL not in LOGGING_LEVEL_MAPPING:
         error_message = "Invalid logging level provided."
         raise ValueError(error_message)
