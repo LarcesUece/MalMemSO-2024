@@ -1,18 +1,13 @@
 """
-HTTP Client Utilities
-
-This module provides utility functions to handle HTTP client 
-operations, including establishing a connection, validating and 
-formatting endpoints and decoding HTTP responses.
+Utility module for HTTP client operations.
 
 Functions:
-    - get_connection(): Establishes and returns an HTTP connection to 
-        the server using the provided service data.
-    - validate_endpoint(endpoint): Validates and formats the given 
-        endpoint by ensuring it is a non-empty string and with all the 
-        trailing slashes necessary.
-    - decode_response(response): Decodes the provided HTTP response, 
-        ensuring it is an instance of HTTPResponse and not empty.
+    get_connection() -> http.client.HTTPConnection: Creates and returns 
+        an HTTP connection.
+    validate_endpoint(endpoint: str) -> str: Validates and formats an 
+        endpoint.
+    decode_response(response: http.client.HTTPResponse) -> str: Decodes 
+        an HTTP response.
 """
 
 from http.client import HTTPConnection, HTTPResponse
@@ -22,13 +17,10 @@ from ..config.config import SERVICE_DATA
 
 
 def get_connection() -> HTTPConnection:
-    """Establishes and returns a connection to the server.
-
-    Uses the server data (host, port, timeout) from the configuration to
-    establish an HTTP connection.
+    """Creates and returns an HTTP connection using service data.
 
     Returns:
-        http.client.HTTPConnection: The connection to the server.
+        http.client.HTTPConnection: The created HTTP connection.
     """
 
     host = SERVICE_DATA["host"]
@@ -43,13 +35,10 @@ def get_connection() -> HTTPConnection:
 
 
 def validate_endpoint(endpoint: str) -> str:
-    """Validates and formats the given endpoint.
-
-    Ensures the endpoint is a non-empty string and formats it ensuring
-    it has all the trailing slashes necessary.
+    """Validates and formats an endpoint.
 
     Args:
-        endpoint (str): The endpoint to validate and format.
+        endpoint (str): The endpoint to validate.
 
     Returns:
         str: The formatted endpoint.
@@ -80,19 +69,18 @@ def validate_endpoint(endpoint: str) -> str:
 
 
 def decode_response(response: HTTPResponse) -> str:
-    """Decodes the HTTP response.
-
-    Reads and decodes the response content.
+    """Decodes an HTTP response.
 
     Args:
-        response (http.client.HTTPResponse): The response to decode.
+        response (http.client.HTTPResponse): The HTTP response to
+            decode.
 
     Returns:
         str: The decoded response content.
 
     Raises:
         ValueError: If the response is empty.
-        TypeError: If the response is not an instance of HTTPResponse.
+        TypeError: If the response is not an HTTPResponse instance.
     """
 
     if not response:

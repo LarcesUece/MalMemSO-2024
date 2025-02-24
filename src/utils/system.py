@@ -1,14 +1,10 @@
 """
-System Utilities
-
-This module provides utility functions to interact with and manage the
-current system environment, including checking the operating system and 
-deleting files.
+Utility module for system-related operations.
 
 Functions:
-    - delete_file_if_exists(filepath): Deletes the specified file if it
+    delete_file_if_exists(filepath: str) -> None: Deletes a file if it 
         exists.
-    - check_supported_os(): Verifies if the current OS is Windows 10.
+    check_supported_os() -> None: Checks if the OS is supported.
 """
 
 from logging import error, info
@@ -18,6 +14,15 @@ from platform import release, system
 
 
 def delete_file_if_exists(filepath: str) -> None:
+    """Deletes a file if it exists.
+
+    Args:
+        filepath (str): Path to the file to delete.
+
+    Raises:
+        PermissionError: If deletion fails due to permission issues.
+    """
+
     if exists(filepath):
         try:
             remove(filepath)
@@ -31,6 +36,12 @@ def delete_file_if_exists(filepath: str) -> None:
 
 
 def check_supported_os() -> None:
+    """Checks if the OS is Windows 10.
+
+    Raises:
+        EnvironmentError: If the OS is not supported.
+    """
+
     os_name = system()
     os_release = release()
 

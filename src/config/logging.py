@@ -1,13 +1,8 @@
 """
-Logging Configuration
-
-This module is responsible for configuring the logging setup of the
-application. It ensures that logs are stored in the appropriate
-directory with settings defined by predefined configuration constants.
+Sets up logging for the application.
 
 Functions:
-    - setup_logging(): Configures the logging system using predefined
-        constants.
+    setup_logging: Configures the logging system.
 """
 
 from logging import basicConfig
@@ -23,14 +18,7 @@ from ..config.paths import LOGS_DIR
 
 
 def setup_logging() -> None:
-    """Configures logging for the application.
-
-    Validates the given configuration and sets up logging with the
-    specified settings from predefined constants.
-
-    The function does not take any arguments and relies on the values
-    from the configuration.
-    """
+    """Sets up logging based on the configuration."""
 
     _validate_logging_config()
 
@@ -44,17 +32,7 @@ def setup_logging() -> None:
 
 
 def _validate_logging_config() -> None:
-    """Validates the logging configuration values.
-
-    Ensures that the required logging configuration values are provided,
-    of the correct type and valid for setting up logging.
-
-    Raises:
-        ValueError: If any configuration value is missing, empty or
-            invalid.
-        TypeError: If any configuration value is not a string where
-            expected.
-    """
+    """Validates logging configuration values."""
 
     if not LOGGING_FILENAME or not LOGGING_FORMAT or not LOGGING_LEVEL:
         error_message = "Logging configuration is missing required values."
@@ -76,6 +54,6 @@ def _validate_logging_config() -> None:
         error_message = "Logging level must be a string."
         raise TypeError(error_message)
 
-    if LOGGING_LEVEL not in LOGGING_LEVEL_MAPPING:
+    if not LOGGING_LEVEL in LOGGING_LEVEL_MAPPING:
         error_message = "Invalid logging level provided."
         raise ValueError(error_message)

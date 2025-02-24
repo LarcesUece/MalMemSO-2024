@@ -1,12 +1,10 @@
-"""  
-Application Entry Point  
+"""
+Main module to run the memory dump extraction, compression and sending 
+process.
 
-This module serves as the entry point for the application. It 
-initializes the environment, extracts a dump file, compresses it, and 
-returns the path to the compressed file.  
-
-Functions:  
-    - run(): Executes the main process of extraction and compression.  
+Functions:
+    run: Executes the full pipeline from extraction to sending the 
+        compressed dump.
 """
 
 from src import initialize
@@ -16,16 +14,11 @@ from src.modules.file_sender import send_file
 
 
 def run() -> str:
-    """Executes the main workflow of the application.
-
-    Initializes the application environment, extracts a dump file based
-    on the provided arguments, compresses it, and returns the path to
-    the compressed dump file.
+    """Runs the extraction, compression, and sending process.
 
     Returns:
-        str: The path to the compressed dump file.
+        str: The name of the sent file.
     """
-
     args = initialize()
     raw_dump_filepath = extract_dump(**vars(args))
     zip_dump_filepath = compress_file(filepath=raw_dump_filepath)

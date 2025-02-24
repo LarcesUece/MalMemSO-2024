@@ -1,4 +1,11 @@
-"""Module for extracting memory dump files."""
+"""
+Module for extracting memory dumps using specified tools and 
+architectures.
+
+Functions:
+    extract_dump(tool: str, arch: str) -> str: Extracts a memory dump 
+        using the specified tool and architecture.
+"""
 
 from logging import error, info
 from os import listdir
@@ -16,31 +23,24 @@ from ..config.config import (
     TOOL_COMMANDS,
 )
 from ..config.paths import BIN_DIR, RAW_DIR
-from ..utils.utils import delete_file_if_exists
+from ..utils.system import delete_file_if_exists
 
 
 def extract_dump(
     tool: str = PARSER_TOOL_DEFAULT, arch: str = PARSER_ARCH_DEFAULT
 ) -> str:
-    """Extracts the memory dump file using the specified tool and
-    architecture.
-
-    Validates the values provided and generates the required paths to
-    execute the tool command. If an error occurs during memory dump
-    extraction, the output file is deleted. If no tool or architecture
-    is provided, the default values are used.
+    """Extracts a memory dump using the specified tool and architecture.
 
     Args:
-        tool (str): Tool used to extract the memory dump file.
-        arch (str): Architecture of the target system.
+        tool (str): The tool to use for extraction.
+        arch (str): The architecture to use.
 
     Returns:
-        str: Path to the memory dump file.
+        str: Path to the extracted memory dump file.
 
     Raises:
-        SubprocessError: If an error occurs during memory dump extraction.
-        RuntimeError: If an unexpected error occurs during memory dump
-        extraction.
+        SubprocessError: If an error occurs during extraction.
+        RuntimeError: If the extraction fails.
     """
 
     info("Running memory dump extraction.")
@@ -49,7 +49,8 @@ def extract_dump(
     formatted_arch = PARSER_ARCH_MAPPING[arch]
     tool_path = join(BIN_DIR, f"{tool}_{formatted_arch}.exe")
     output_path = _generate_output_path(tool, formatted_arch)
-    command = TOOL_COMMANDS[tool](tool_path, output_path)
+    command = TOOL_COMMANDS.get(tool)(tool_path, output_path)
+    # command = TOOL_COMMANDS[tool](tool_path, output_path)
     error_message = None
 
     info(f"Extracting memory dump using '{tool.capitalize()}' tool.")
@@ -87,16 +88,14 @@ def extract_dump(
 
 
 def _validate_extract_dump_args(tool: str, arch: str) -> None:
-    """Validates the arguments for the extract_dump function.
-
-    Checks if the tool and architecture are valid.
+    """Validates the tool and architecture arguments.
 
     Args:
-        tool (str): Tool used to extract the memory dump file.
-        arch (str): Architecture of the target system.
+        tool (str): The tool to validate.
+        arch (str): The architecture to validate.
 
     Raises:
-        ValueError: If the tool or architecture is invalid.
+        ValueError: If tool or architecture is invalid.
     """
 
     info("Validating tool and arch provided for memory dump extraction.")
@@ -111,14 +110,19 @@ def _validate_extract_dump_args(tool: str, arch: str) -> None:
         error(error_message)
         raise ValueError(error_message)
 
-    if tool not in PARSER_TOOL_OPTIONS:
+    if not tool in PARSER_TOOL_OPTIONS:
         error_message = f"Tool not supported: {tool}."
+        error(error_message)
+        raise ValueError(error_message)
+
+    if not tool in TOOL_COMMANDS:
+        error_message = f"Tool command not found: {tool}."
         error(error_message)
         raise ValueError(error_message)
 
     info("Tool is valid.")
 
-    if arch not in PARSER_ARCH_OPTIONS:
+    if not arch in PARSER_ARCH_OPTIONS:
         error_message = f"Architecture not supported: {arch}."
         error(error_message)
         raise ValueError(error_message)
@@ -127,21 +131,14 @@ def _validate_extract_dump_args(tool: str, arch: str) -> None:
 
 
 def _generate_output_path(tool: str, arch: str) -> str:
-    """Generates the output path for the memory dump file.
-
-    The output path is formatted as "dump_<tool>_<arch>_<number>.raw".
-    This function gets the next available number for the memory dump
-    file, and returns the output path.
+    """Generates the output path for the extracted dump.
 
     Args:
-        tool (str): Tool used to extract the memory dump file.
-        arch (str): Architecture of the target system.
+        tool (str): The tool used.
+        arch (str): The architecture used.
 
     Returns:
-        str: The path generated for the memory dump file.
-
-    Raises:
-        FileNotFoundError: If the raw output directory does not exist.
+        str: The generated output path.
     """
 
     if not exists(RAW_DIR):
@@ -160,18 +157,13 @@ def _generate_output_path(tool: str, arch: str) -> str:
 
 
 def _is_dump_empty(filepath: str) -> bool:
-    """Checks if the dump file is empty.
-
-    Checks if the memory dump file exists and has a size greater than
-    0. Returns True if the file does not exist or is empty, False
-    otherwise.
+    """Checks if the extracted dump file is empty.
 
     Args:
-        filepath (str): Path to the memory dump file.
+        filepath (str): Path to the dump file.
 
     Returns:
-        bool: True if the file is empty or does not exist, False
-        otherwise.
+        bool: True if the file is empty, False otherwise.
     """
 
     if exists(filepath):
@@ -182,21 +174,39 @@ def _is_dump_empty(filepath: str) -> bool:
 
 
 def _extract_error_message(stdout: str, tool: str) -> str | None:
-    if tool == "dumpit":
-        error_pattern = re_compile(r"^(?:error|Error|ERROR):\s*(.+)", MULTILINE)
-    elif tool == "winpmem":
-        error_pattern = re_compile(r"^[ \t]*(Failed.*)", MULTILINE)
-    else:
+    """Extracts an error message from stdout if extraction failed.
+
+    Args:
+        stdout (str): The standard output from the extraction.
+        tool (str): The tool used for extraction.
+
+    Returns:
+        str | None: Extracted error message or None if not found.
+    """
+
+    if not tool in PARSER_TOOL_OPTIONS:
         return None
 
-    match = error_pattern.search(stdout)
-    if match:
-        return match.group(1).strip()
-
-    return None
+    error_patterns = {
+        "dumpit": re_compile(r"^(?:error|Error|ERROR):\s*(.+)", MULTILINE),
+        "winpmem": re_compile(r"^[ \t]*(Failed.*)", MULTILINE),
+    }
+    pattern = error_patterns.get(tool)
+    match = pattern.search(stdout) if pattern else None
+    return match.group(1).strip() if match else None
 
 
 def _is_successful_stdout(stdout: str, tool: str) -> bool:
+    """Validates if the stdout indicates a successful extraction.
+
+    Args:
+        stdout (str): The standard output from the extraction.
+        tool (str): The tool used for extraction.
+
+    Returns:
+        bool: True if extraction was successful, False otherwise.
+    """
+
     if tool == "dumpit":
         pattern = re_compile(r"^[ \t]*Acquisition finished at:.*", MULTILINE)
         return bool(pattern.search(stdout))

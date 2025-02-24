@@ -1,13 +1,8 @@
 """
-Argument Parser Setup
-
-This module configures and validates the command-line argument parsing 
-for the application. It allows users to specify options such as the 
-memory dump tool and system architecture, based on predefined 
-configuration values.
+Argument parser setup for memory dump extraction tool.
 
 Functions:
-    - setup_argparser(): Initializes and configures the argument parser.
+    setup_argparser: Configures and returns command-line arguments.
 """
 
 from argparse import ArgumentParser, Namespace
@@ -22,15 +17,10 @@ from ..config.config import (
 
 
 def setup_argparser() -> Namespace:
-    """Setup the argument parser for the application.
-
-    Configures an ArgumentParser using predefined constants, which
-    define options for selecting the memory dump tool and system
-    architecture.
+    """Sets up and validates command-line arguments.
 
     Returns:
-        argparser.Namespace: The parsed command-line arguments,
-        containing values for 'tool' and 'arch' options.
+        argparser.Namespace: Parsed command-line arguments.
     """
 
     _validate_parser_config()
@@ -65,17 +55,7 @@ def setup_argparser() -> Namespace:
 
 
 def _validate_parser_config() -> None:
-    """Validate the parser configuration.
-
-    Ensures the necessary values for the argument parser are defined
-    and have the correct types. This includes checking for required
-    keys, valid default values and ensuring that options are lists and
-    defaults are strings.
-
-    Raises:
-        ValueError: If any required value is missing, empty, or invalid.
-        TypeError: If any configuration value is of an incorrect type.
-    """
+    """Validates the parser configuration settings."""
 
     if (
         not PARSER_TOOL_OPTIONS
@@ -111,12 +91,12 @@ def _validate_parser_config() -> None:
         error(error_message)
         raise TypeError(error_message)
 
-    if PARSER_TOOL_DEFAULT not in PARSER_TOOL_OPTIONS:
+    if not PARSER_TOOL_DEFAULT in PARSER_TOOL_OPTIONS:
         error_message = "Invalid default tool provided."
         error(error_message)
         raise ValueError(error_message)
 
-    if PARSER_ARCH_DEFAULT not in PARSER_ARCH_OPTIONS:
+    if not PARSER_ARCH_DEFAULT in PARSER_ARCH_OPTIONS:
         error_message = "Invalid default architecture provided."
         error(error_message)
         raise ValueError(error_message)

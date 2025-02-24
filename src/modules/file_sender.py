@@ -1,20 +1,38 @@
+"""
+Module for sending files to a remote service.
+
+Functions:
+    send_file(filepath: str) -> str: Sends a file to a remote service.
+"""
+
 from http.client import HTTPException
 from logging import error, info
 from os.path import basename
 from uuid import uuid4
 
-from ..config.config import ENDPOINT_DATA, SERVICE_DATA
+from ..config.config import ENDPOINT_DATA
 from ..utils.client import get_connection, validate_endpoint
 
 
 def send_file(filepath: str) -> str:
+    """Sends a file to a remote service.
 
-    server_data = SERVICE_DATA
+    Args:
+        filepath (str): Path to the file to send.
+
+    Returns:
+        str: The name of the uploaded file.
+
+    Raises:
+        HTTPException: If the upload fails.
+        ConnectionError: If a connection error occurs.
+    """
+
     endpoint_data = ENDPOINT_DATA
 
     info("Starting file upload to service.")
 
-    connection = get_connection(server_data)
+    connection = get_connection()
     upload_endpoint = validate_endpoint(endpoint_data["upload"])
     filename = basename(filepath)
 
@@ -40,7 +58,7 @@ def send_file(filepath: str) -> str:
             connection.request("POST", url=upload_endpoint, body=body, headers=headers)
             response = connection.getresponse()
 
-            if response.status not in [200, 201]:
+            if not response.status in [200, 201]:
                 raise HTTPException(
                     f"Failed to upload file. Status: {response.status}."
                 )

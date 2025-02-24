@@ -1,3 +1,9 @@
+"""
+Configuration loader for the application.
+
+Loads service, parser and logging configurations.
+"""
+
 from logging import CRITICAL, DEBUG, ERROR, FATAL, INFO, NOTSET, WARN, WARNING
 
 from ..config.configparser import load_config, validate_config_data

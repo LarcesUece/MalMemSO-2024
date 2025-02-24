@@ -1,28 +1,5 @@
 """
-Paths Configuration
-
-This module defines and stores the absolute paths used throughout the 
-application. It calculates and stores the locations of various 
-directories and files, including configuration files, logs, outputs and 
-binaries.
-
-Paths:
-    - BIN_DIR: The directory for binary executables.
-    - CONFIG_DIR: The directory where the configuration files are 
-        located.
-    - INI_EXAMPLE_PATH: The absolute path to the example configuration 
-        file (config.example.ini).
-    - INI_PATH: The absolute path to the main configuration file 
-        (config.ini).
-    - LOGS_DIR: The directory where logs are stored.
-    - MODULES_DIR: The directory containing the modules.
-    - OUTPUTS_DIR: The directory where output files are stored.
-    - RAW_DIR: The directory where raw output files are stored.
-    - ROOT_DIR: The root directory of the project.
-    - SRC_DIR: The root source directory of the application.
-    - UTILS_DIR: The directory containing utility functions.
-    - ZIP_DIR: The directory where zip archives are stored.
-
+Defines and resolves paths used across the application.
 """
 
 from os.path import abspath, dirname, join, pardir, realpath

@@ -1,4 +1,10 @@
-"""Module for compressing files into zip archives."""
+"""
+Module for compressing files into ZIP archives.
+
+Functions:
+    compress_file(filepath: str) -> str: Compresses a file into a ZIP 
+        archive.
+"""
 
 from logging import error, info
 from os.path import basename, exists, join
@@ -11,19 +17,15 @@ from ..config.paths import ZIP_DIR
 def compress_file(filepath: str) -> str:
     """Compresses a file into a ZIP archive.
 
-    Compresses the file at the given path into a ZIP archive and saves
-    it in the zip output directory. The compressed file is named after
-    the original file with a .zip extension.
-
     Args:
         filepath (str): Path to the file to compress.
 
     Returns:
-        str: Path to the compressed file.
+        str: Path to the compressed ZIP file.
 
     Raises:
         FileNotFoundError: If the file does not exist.
-        RuntimeError: If an error occurs while compressing the file.
+        RuntimeError: If an error occurs during compression.
     """
 
     info("Running dump file compression.")
