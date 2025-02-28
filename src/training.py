@@ -1,22 +1,24 @@
-import pandas as pd
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.neural_network import MLPClassifier
-from sklearn.svm import SVC
-from sklearn.tree import DecisionTreeClassifier
-from flask import current_app as app
+import os
 from datetime import datetime
-import numpy as np
+
 import joblib
+import numpy as np
+import pandas as pd
+from flask import current_app as app
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import (
     accuracy_score,
     average_precision_score,
     f1_score,
     recall_score,
 )
-import os
-from .db.utils import insert_training_data, fetch_data_for_training
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+
+from .db.utils import fetch_data_for_training, insert_training_data
 
 
 def create_model(

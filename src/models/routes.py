@@ -1,8 +1,11 @@
-from flask import current_app as app, request
 from threading import Thread
+
+from flask import current_app as app
+from flask import request
+
 from ..db import db
-from .models import Model
 from ..training import train_all
+from .models import Model
 
 
 @app.get("/model/")

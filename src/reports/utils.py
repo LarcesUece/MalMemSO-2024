@@ -1,8 +1,8 @@
-from sqlalchemy.sql.sqltypes import Float, Integer, Numeric
 from sqlalchemy.sql import func
+from sqlalchemy.sql.sqltypes import Float, Integer, Numeric
 
-from .models import Report
 from ..db import db
+from .models import Report
 
 
 def get_numeric_columns_average() -> dict:

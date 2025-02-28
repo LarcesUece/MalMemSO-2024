@@ -1,4 +1,5 @@
-from flask import current_app as app, request
+from flask import current_app as app
+from flask import request
 
 from ..db import db
 from .models import Report

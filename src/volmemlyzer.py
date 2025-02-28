@@ -1,8 +1,9 @@
-from flask import current_app as app
-from subprocess import Popen, PIPE
-from re import search, DOTALL
 import csv
 import os
+from re import DOTALL, search
+from subprocess import PIPE, Popen
+
+from flask import current_app as app
 
 
 def init_lib():
@@ -34,21 +35,6 @@ def edit_vol_modules():
         raise ValueError(
             "Unable to find the VOL_MODULES dictionary in the target file."
         )
-
-
-# def edit_output_file(target_file, new_output):
-#     with open(target_file, "r") as file:
-#         lines = file.readlines()
-
-#     for i, line in enumerate(lines):
-#         if line.strip().startswith(
-#             "file_path = os.path.join(CSVoutput_path, 'output.csv')"
-#         ):
-#             lines[i] = f"    file_path = os.path.join(CSVoutput_path, '{new_output}')\n"
-#             break
-
-#     with open(target_file, "w") as file:
-#         file.writelines(lines)
 
 
 def edit_input_file_list():

@@ -1,12 +1,14 @@
-from flask import current_app as app, request
-from flask.typing import ResponseReturnValue
+import os
 from datetime import datetime
 from threading import Thread
-import os
 
+from flask import current_app as app
+from flask import request
+from flask.typing import ResponseReturnValue
+
+from ..db import db
 from .models import Dump
 from .utils import process_dump
-from ..db import db
 
 
 @app.get("/dump/")
@@ -28,6 +30,12 @@ def get_dumps_count() -> ResponseReturnValue:
 def get_dump(id: int) -> ResponseReturnValue:
     dump = Dump.query.get_or_404(ident=id)
     return {"dump": dump.as_dict()}
+
+
+@app.get("/dump/malware/<int:id>")
+def get_malware(id: int) -> ResponseReturnValue:
+    dump = Dump.query.get_or_404(ident=id)
+    return {"dump": {"malware": dump.malware_detected}}
 
 
 @app.post("/dump/")

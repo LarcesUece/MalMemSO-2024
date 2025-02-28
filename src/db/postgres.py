@@ -1,6 +1,6 @@
-from psycopg2 import connect, Error
-from psycopg2.extensions import connection
 from flask import current_app as app
+from psycopg2 import Error, connect
+from psycopg2.extensions import connection
 
 
 def create_connection() -> connection:

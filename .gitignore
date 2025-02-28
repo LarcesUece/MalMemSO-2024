@@ -2,4 +2,4 @@
 libs/
 .env
 __pycache__/
-*.pkl
+# *.pkl

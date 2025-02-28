@@ -1,9 +1,12 @@
-from flask import current_app as app, Flask
-from zipfile import ZipFile
-from os.path import join, getsize
 from datetime import datetime
-from ..db import db
+from os.path import getsize, join
+from zipfile import ZipFile
+
+from flask import Flask
+from flask import current_app as app
+
 from .. import volmemlyzer
+from ..db import db
 from .models import Dump
 
 

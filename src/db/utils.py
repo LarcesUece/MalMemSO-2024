@@ -1,10 +1,10 @@
-from flask import current_app as app
 import pandas as pd
+from flask import current_app as app
 
-from . import db
-from .postgres import create_connection
 from ..models.models import Model
 from ..reports.models import Report
+from . import db
+from .postgres import create_connection
 
 
 def fetch_data_for_training() -> pd.DataFrame:
